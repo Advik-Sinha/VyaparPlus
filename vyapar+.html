@@ -328,7 +328,7 @@
             </div>
           </div>
           <div id="kiranaVoiceHelper" class="hidden bg-rose-50 border border-rose-200 text-rose-700 text-[10px] p-2 rounded-lg font-medium">
-            <i class="fa-solid fa-microphone recording-pulse-red text-rose-600 mr-1"></i> <span data-i18n="listeningVoice">Listening... Say e.g. "Add Sugar price 50 quantity 10"</span>
+            <i class="fa-solid fa-microphone recording-pulse text-rose-600 mr-1"></i> <span data-i18n="listeningVoice">Listening... Say e.g. "Add Sugar price 50 quantity 10"</span>
           </div>
 
           <div id="kiranaInventoryList" class="space-y-2.5 max-h-80 overflow-y-auto pr-1"></div>
@@ -388,7 +388,7 @@
   </main>
 
   <!-- Floating AI Assistant FAB -->
-  <button onclick="openAIAssistant()" class="ai-fab bg-gradient-to-tr from-indigo-600 to-violet-600 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-2.5 border border-indigo-400 hover:scale-105 transition">
+  <button onclick="openAIAssistant()" class="ai-fab fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 bg-gradient-to-tr from-indigo-600 to-violet-600 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-2.5 border border-indigo-400 hover:scale-105 transition">
     <div class="w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center text-sm">
       <i class="fa-solid fa-robot"></i>
     </div>
@@ -847,9 +847,9 @@
         logOnlinePayment: "✓ ਆਨਲਾਈਨ ਭੁਗਤਾਨ ਦਰਜ ਕਰੋ", setupTitle: "ਵਿਪਾਰਪਲੱਸ ਸੈੱਟਅੱਪ", welcomeTitle: "ਵਿਪਾਰਪਲੱਸ ਵਿੱਚ ਜੀ ਆਇਆਂ ਨੂੰ",
         welcomeDesc: "ਵਿਕਰੇਤਾਵਾਂ ਅਤੇ ਕਿਰਾਣਾ ਦੁਕਾਨਦਾਰਾਂ ਲਈ ਤੁਹਾਡਾ ਸਮਾਰਟ ਪਲੇਟਫਾਰਮ।", startBtn: "ਸ਼ੁਰੂ ਕਰੋ", chooseLang: "ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ",
         selectLangSub: "ਐਪ ਇੰਟਰਫੇਸ ਲਈ ਭਾਸ਼ਾ ਚੁਣੋ:", selectCategory: "ਵਪਾਰ ਸ਼੍ਰੇਣੀ ਚੁਣੋ", vendorRole: "ਵਿਕਰੇਤਾ / ਫੇਰੀਵਾਲਾ", vendorRoleSub: "ਤੁਰੰਤ ਨਕਦ/ਆਨਲਾਈਨ ਐਂਟਰੀਆਂ",
-        shopkeeperRole: "ਦੁਕਾਨਦਾਰ / ਕਿਰਾਣਾ", shopkeeperRoleSub: "ਪੀ.ਓ.ਐੱਸ ਬਿਲਿੰਗ ਅਤੇ ਇਨਵੈਂਟਰੀ", createProfile: "ਪ੍ਰੋਫਾਈਲ ਬਣਾਓ", continue: "ਜਾਰੀ ਰੱਖੋ",
+        shopkeeperRole: "ਦੁਕਾਨદાર / ਕਿਰਾਣਾ", shopkeeperRoleSub: "ਪੀ.ਓ.ਐੱਸ ਬਿਲਿੰਗ ਅਤੇ ਇਨਵੈਂਟਰੀ", createProfile: "ਪ੍ਰੋਫਾਈਲ ਬਣਾਓ", continue: "ਜਾਰੀ ਰੱਖੋ",
         trialActivated: "15-ਦਿਨ ਦੀ ਮੁਫਤ ਅਜ਼ਮਾਇਸ਼ ਸਰਗਰਮ!", launchPortal: "🚀 ਮੇਰਾ ਪੋਰਟਲ ਲਾਂਚ ਕਰੋ", unlockPremium: "ਪ੍ਰੀਮੀਅਮ ਅਨਲੌਕ ਕਰੋ (₹49/ਮਹੀਨਾ)",
-        trialStatus: "ਅਜ਼ਮਾਇਸ਼ ਸਥਿਤੀ", qrDesc: "UPI ਰਾਹੀਂ ₹49 ਦਾ ਭੁਗਤਾਨ ਕਰਨ ਲਈ QR ਸਕੈਨ ਕਰੋ।", iHavePaid: "✓ ਮੈਂ UPI ਰਾਹੀਂ ₹49 ਦਾ ਭੁਗਤਾਨ ਕਰ ਦਿੱਤਾ ਹੈ — ਪ੍ਰੋ ਐਕਟੀਵੇਟ ਕਰੋ",
+        trialStatus: "ਅਜ਼ਮਾਇਸ਼ ਸਥਿਤੀ", qrDesc: "UPI ਰਾਹੀਂ ₹49 ਦਾ ਭੁਗਤਾਨ ਕਰਨ ਲਈ QR ਸਕੈਨ ਕਰੋ.", iHavePaid: "✓ ਮੈਂ UPI ਰਾਹੀਂ ₹49 ਦਾ ਭੁਗਤਾਨ ਕਰ ਦਿੱਤਾ ਹੈ — ਪ੍ਰੋ ਐਕਟੀਵੇਟ ਕਰੋ",
         recordCashSale: "ਨਕਦ ਵਿਕਰੀ ਦਰਜ ਕਰੋ", saveCashSale: "ਨਕਦ ਵਿਕਰੀ ਸੁਰੱਖਿਅਤ ਕਰੋ", addCredit: "ਕ੍ਰੈਡਿਟ ਸ਼ਾਮਲ ਕਰੋ", saveToKhata: "ਖਾਤਾ ਬਹੀ ਵਿੱਚ ਸੁਰੱਖਿਅਤ ਕਰੋ",
         addStock: "ਸਟਾਕ ਸ਼ਾਮਲ ਕਰੋ", addItemBtn: "ਆਈਟਮ ਸ਼ਾਮਲ ਕਰੋ", accountSettings: "ਖਾਤਾ ਸੈਟਿੰਗਾਂ", profileName: "ਪ੍ਰੋਫਾਈਲ ਨਾਮ:",
         businessName: "ਕਾਰੋਬਾਰ ਦਾ ਨਾਮ:", mobileNumber: "ਮੋਬਾਈਲ ਨੰਬਰ:", switchMode: "ਮੋਡ ਬਦਲੋ:", vendor: "ਵਿਕਰੇਤਾ", kirana: "ਕਿਰਾਣਾ", deleteAccount: "ਖਾਤਾ ਮਿਟਾਓ"
@@ -878,7 +878,7 @@
         trialStatus: "અજમાયશ સ્થિતિ", qrDesc: "UPI દ્વારા ₹49 ચૂકવવા માટે QR સ્કેન કરો.", iHavePaid: "✓ મેં UPI દ્વારા ₹49 ચૂકવ્યા છે — પ્રો સક્રિય કરો",
         recordCashSale: "રોકડ વેચાણ રેકોર્ડ કરો", saveCashSale: "રોકડ વેચાણ સાચવો", addCredit: "ક્રેડિટ ઉમેરો", saveToKhata: "ખાતાવહીમાં સાચવો",
         addStock: "સ્ટોક ઉમેરો", addItemBtn: "આઇટમ ઉમેરો", accountSettings: "ખાતા સેટિંગ્સ", profileName: "પ્રોફાઇલ નામ:", businessName: "વ્યવસાયનું નામ:",
-        mobileNumber: "મોબાઈલ નંબર:", switchMode: "મોડ બદલો:", vendor: "વિક્રેता", kirana: "કિરાણા", deleteAccount: "ખાતું ડિલીટ કરો"
+        mobileNumber: "મોબાઈલ નંબર:", switchMode: "મોડ બદલો:", vendor: "વિક્રેતા", kirana: "કિરાણા", deleteAccount: "ખાતું ડિલીટ કરો"
       },
       mr: {
         todayRevenue: "एकूण कमाई", cashSales: "रोख विक्री", netProfit: "निव्वळ नफा", khataCredit: "खाते उधारी", openKhata: "खाते वही उघडा",
@@ -1203,9 +1203,10 @@
       if (totalStock === 0) invContainer.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">No stock items added.</div>`;
       else invContainer.innerHTML = APP_STATE.kiranaInventory.map(i => `
           <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
-            <div><h4 class="font-bold text-slate-900">${i.name}</h4><span class="text-[10px] text-slate-500">Price: ₹${i.price}</span></div>
+            <div><h4 class="font-bold text-slate-900">${i.name}</h4><span class="text-[10px] text-slate-500">Price: ₹${i.price} • Cost: ₹${i.cost || 0}</span></div>
             <div class="flex items-center gap-2">
               <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${parseInt(i.qty) <= 5 ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">Stock: ${i.qty}</span>
+              <button onclick="deleteKiranaStock('${i.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
         `).join('');
@@ -1542,6 +1543,35 @@
       }
       APP_STATE.posCart = [];
       renderAllDashboards();
+    }
+
+    function handleSaveKiranaStockItem(e) {
+      e.preventDefault();
+      const name = document.getElementById('kiranaItemName').value;
+      const price = parseFloat(document.getElementById('kiranaItemPrice').value);
+      const cost = parseFloat(document.getElementById('kiranaItemCost').value) || 0;
+      const qty = parseInt(document.getElementById('kiranaItemQty').value) || 0;
+      if(!name || !price) return;
+      
+      const newItem = { id: 'kstock_' + Date.now(), name, price, cost, qty };
+      APP_STATE.kiranaInventory.unshift(newItem);
+      localStorage.setItem('vp_kirana_stock', JSON.stringify(APP_STATE.kiranaInventory));
+      
+      document.getElementById('kiranaItemName').value = '';
+      document.getElementById('kiranaItemPrice').value = '';
+      document.getElementById('kiranaItemCost').value = '';
+      document.getElementById('kiranaItemQty').value = '';
+      
+      closeModal('modalAddKiranaStock');
+      renderKiranaDashboard();
+      showToast('Stock Added', `Added ${name} to Kirana inventory.`);
+    }
+
+    function deleteKiranaStock(id) {
+      APP_STATE.kiranaInventory = APP_STATE.kiranaInventory.filter(i => i.id !== id);
+      localStorage.setItem('vp_kirana_stock', JSON.stringify(APP_STATE.kiranaInventory));
+      renderKiranaDashboard();
+      showToast('Stock Removed', 'Inventory item deleted.');
     }
 
     function setWizardLang(l) { 
