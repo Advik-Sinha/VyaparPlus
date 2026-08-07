@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VyaparPlus - Smart Vendor, Kirana & Wholesaler Platform</title>
+  <title>VyaparPlus - Smart Vendor & Kirana Platform</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,33 +23,26 @@
       background-color: #f8fafc;
       -webkit-tap-highlight-color: transparent;
     }
-    .recording-pulse-red { animation: pulse-red 1.5s infinite; }
-    @keyframes pulse-red {
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .glass-nav {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+    }
+    @keyframes pulse-ring {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
+    .recording-pulse { animation: pulse-ring 1.5s infinite; }
     #map { height: 260px; width: 100%; border-radius: 1rem; z-index: 10; }
-    
-    /* Floating AI Button */
-    .ai-fab {
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      z-index: 45;
-      animation: float 3s ease-in-out infinite;
-    }
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-      100% { transform: translateY(0px); }
-    }
   </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between pb-20">
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between pb-24 md:pb-6">
 
   <!-- Header Bar -->
-  <header class="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-lg">
+  <header class="sticky top-0 z-40 glass-nav text-white border-b border-slate-800 shadow-lg">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-xl flex items-center justify-center font-black text-xl text-slate-950 shadow-md">
@@ -69,14 +62,17 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="openGSTReports()" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-lg text-xs font-semibold transition">
+        <!-- Reports & GST Button -->
+        <button onclick="openGSTReports()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-lg text-xs font-semibold transition">
           <i class="fa-solid fa-chart-bar"></i> <span data-i18n="reportsGst">Reports & GST</span>
         </button>
 
-        <button onclick="openSubscriptionModal()" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-xs font-semibold transition">
+        <!-- Subscription / Plan Button -->
+        <button onclick="openSubscriptionModal()" class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-xs font-semibold transition">
           <i class="fa-solid fa-crown text-amber-400"></i> <span data-i18n="plan49">Plan ₹49</span>
         </button>
 
+        <!-- Language Selector -->
         <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-slate-800 text-slate-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
           <option value="en">English</option>
           <option value="hi">हिंदी (Hindi)</option>
@@ -88,7 +84,8 @@
           <option value="te">తెలుగు (Telugu)</option>
         </select>
 
-        <button onclick="openAccountModal()" title="Account Settings" class="p-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg border border-slate-700 transition">
+        <!-- Profile / Account Settings -->
+        <button onclick="openAccountModal()" title="Account & Plan Settings" class="p-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg border border-slate-700 transition">
           <i class="fa-solid fa-user-gear text-sm"></i>
         </button>
       </div>
@@ -96,21 +93,22 @@
   </header>
 
   <!-- Subscription Expiry Alert Banner -->
-  <div id="trialWarningBanner" class="bg-gradient-to-r from-rose-600 to-red-700 text-white px-4 py-2 text-xs font-medium text-center flex items-center justify-between shadow-inner hidden">
+  <div id="trialWarningBanner" class="bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 text-white px-4 py-2 text-xs font-medium text-center flex items-center justify-between shadow-inner hidden">
     <span class="max-w-4xl mx-auto flex items-center gap-2">
-      <i class="fa-solid fa-lock text-rose-200"></i>
-      <span id="trialWarningText">Trial Expired. Premium features (AI Voice, Online Payments, GST) are disabled.</span>
+      <i class="fa-solid fa-triangle-exclamation text-rose-200"></i>
+      <span id="trialWarningText">Trial expired! AI Voice Assistant, Online Payments & GST features are locked until subscription is activated.</span>
     </span>
     <button onclick="openSubscriptionModal()" class="px-3 py-1 bg-white text-slate-900 rounded-lg font-bold text-[11px] shadow-sm hover:bg-rose-50 transition">
       Subscribe ₹49/mo
     </button>
   </div>
 
+  <!-- Main Container -->
   <main class="max-w-6xl mx-auto w-full px-4 py-6 flex-grow space-y-6">
 
     <!-- Toast Notification Box -->
-    <div id="toastBox" class="fixed top-20 right-4 z-[60] transform transition-all duration-300 translate-x-full opacity-0 max-w-sm w-full">
-      <div id="toastContent" class="bg-slate-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3">
+    <div id="toastBox" class="fixed top-16 right-4 z-50 transform transition-all duration-300 translate-x-full opacity-0 max-w-sm w-full">
+      <div id="toastContent" class="bg-slate-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-800 flex items-center gap-3">
         <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
         <div class="flex-grow">
           <h4 id="toastTitle" class="font-bold text-sm">Success</h4>
@@ -119,14 +117,13 @@
       </div>
     </div>
 
-    <!-- VENDOR DASHBOARD -->
+    <!-- ROLE DASHBOARD 1: VENDOR / HAWKER -->
     <section id="dashVendor" class="role-dashboard hidden space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Revenue Card -->
         <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
           <div class="flex justify-between items-start">
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-100" data-i18n="todayRevenue">Total Revenue</span>
-            <span class="bg-emerald-500/30 text-emerald-100 text-[10px] px-2 py-0.5 rounded-full font-mono">Today</span>
+            <span class="bg-emerald-500/30 text-emerald-100 text-[10px] px-2 py-0.5 rounded-full font-mono">Live</span>
           </div>
           <div class="text-3xl font-black mt-2 tracking-tight" id="vendorTotalRevenue">₹0.00</div>
           
@@ -226,11 +223,11 @@
           </h3>
           <span class="text-xs text-slate-400" id="vendorSalesCount">0 Sales</span>
         </div>
-        <div id="vendorTxList" class="space-y-2.5 max-h-64 overflow-y-auto pr-1"></div>
+        <div id="vendorTxList" class="space-y-2.5 max-h-64 overflow-y-auto pr-1 no-scrollbar"></div>
       </div>
     </section>
 
-    <!-- KIRANA DASHBOARD -->
+    <!-- ROLE DASHBOARD 2: SHOPKEEPER / KIRANA STORE -->
     <section id="dashShopkeeper" class="role-dashboard hidden space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-slate-900 text-white rounded-2xl p-4 shadow-lg flex flex-col justify-center">
@@ -339,61 +336,6 @@
       </div>
     </section>
 
-    <!-- WHOLESALER DASHBOARD -->
-    <section id="dashWholesaler" class="role-dashboard hidden space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-5 shadow-xl md:col-span-2 flex flex-col justify-center">
-          <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest block mb-1" data-i18n="wholesaleDistributor">
-            Wholesale Distributor Center
-          </span>
-          <h2 class="text-2xl font-black tracking-tight" id="wholesalerStoreTitle">Wholesale Order Desk</h2>
-          <p class="text-xs text-slate-300 mt-1 max-w-xl" data-i18n="wholesalerSub">
-            Accept order requests from local shopkeepers. Manage your catalog.
-          </p>
-        </div>
-        
-        <div class="bg-indigo-900 text-white rounded-2xl p-5 border border-indigo-700 flex flex-col justify-center">
-           <span class="text-[11px] font-semibold text-indigo-300 uppercase block" data-i18n="totalRevenue">Total Revenue</span>
-           <div class="text-2xl font-black mt-1" id="wholesalerTotalRevenue">₹0.00</div>
-           <div class="flex justify-between text-[10px] text-indigo-200 mt-2 border-t border-indigo-700 pt-2">
-             <span>Cash: <b id="wholesalerCash">₹0.00</b></span>
-             <span>Online: <b id="wholesalerOnline">₹0.00</b></span>
-           </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
-          <div class="flex justify-between items-center pb-2 border-b border-slate-100">
-            <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
-              <i class="fa-solid fa-truck-ramp-box text-indigo-600"></i> <span data-i18n="incomingOrders">Incoming Supply Orders</span>
-            </h3>
-            <span class="text-xs text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded-full" id="wholesalerOrderStats">0 Active</span>
-          </div>
-          <div id="wholesalerIncomingOrdersList" class="space-y-3 max-h-96 overflow-y-auto pr-1"></div>
-        </div>
-
-        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
-          <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
-            <i class="fa-solid fa-box-open text-indigo-600"></i> <span data-i18n="publicCatalog">Public Bulk Catalog</span>
-          </h3>
-
-          <form onsubmit="handleAddWholesaleCatalogItem(event)" class="space-y-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <input type="text" id="whCatalogItemName" placeholder="Item Name (e.g. Fortune Oil 15L)" required class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-            <div class="grid grid-cols-2 gap-2">
-              <input type="number" id="whCatalogItemPrice" placeholder="Wholesale Price (₹)" required min="1" class="p-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-              <input type="text" id="whCatalogItemUnit" placeholder="Unit (e.g. Tin, Box)" required class="p-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-            </div>
-            <button type="submit" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-xs transition shadow-sm" data-i18n="addStockItem">
-              + Add Stock Item
-            </button>
-          </form>
-
-          <div id="wholesalerCatalogTable" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
-        </div>
-      </div>
-    </section>
-
     <!-- TAB VIEW 2: KHATA LEDGER -->
     <section id="viewKhata" class="tab-view hidden space-y-6">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -404,29 +346,34 @@
           <p class="text-xs text-slate-500" data-i18n="khataSub">Track pending credit dues. Settlement syncs to Revenue!</p>
         </div>
 
-        <button onclick="openKhataModal()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition">
+        <button onclick="openKhataModal()" class="w-full sm:w-auto px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition">
           <i class="fa-solid fa-plus"></i> <span data-i18n="addCustomerCredit">Add Customer Credit</span>
         </button>
       </div>
+
       <div class="relative">
         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-        <input type="text" id="khataSearchInput" onkeyup="filterKhataEntries()" placeholder="Search customer by name or phone..." class="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm">
+        <input type="text" id="khataSearchInput" onkeyup="filterKhataEntries()" placeholder="Search customer by name or phone..." class="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-sm">
       </div>
+
       <div id="khataGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </section>
 
-    <!-- TAB VIEW 3: WHOLESALERS DISCOVERY -->
+    <!-- TAB VIEW 3: WHOLESALERS (Kirana Only) -->
     <section id="viewWholesalers" class="tab-view hidden space-y-6">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
             <i class="fa-solid fa-store text-indigo-600"></i> <span data-i18n="wholesalersNearby">Wholesale Distributors Nearby</span>
           </h2>
+          <p class="text-xs text-slate-500" data-i18n="wholesalerSub">Locate verified wholesale outlets, check catalog, and order via WhatsApp</p>
         </div>
+
         <button onclick="locateUserAndWholesalers()" class="w-full sm:w-auto px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition">
           <i class="fa-solid fa-location-crosshairs"></i> <span data-i18n="detectGps">Detect My GPS Location</span>
         </button>
       </div>
+
       <div class="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm space-y-2">
         <div id="map"></div>
         <div class="flex justify-between items-center px-3 py-1 text-[11px] text-slate-500 font-medium">
@@ -434,47 +381,165 @@
           <span><i class="fa-solid fa-warehouse text-indigo-600"></i> <span data-i18n="verifiedWholesalers">Verified Wholesale Outlets</span></span>
         </div>
       </div>
+
       <div id="wholesalersList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </section>
 
   </main>
 
-  <!-- Floating AI Assistant Button -->
-  <button onclick="openAIAssistant()" id="aiFabBtn" class="ai-fab w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-500 text-white rounded-full flex items-center justify-center shadow-xl border-2 border-white/20 transition hover:scale-105">
-    <i class="fa-solid fa-robot text-2xl"></i>
-    <span class="absolute -top-1 -right-1 flex h-4 w-4">
-      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-      <span class="relative inline-flex rounded-full h-4 w-4 bg-blue-500 border border-white"></span>
-    </span>
+  <!-- Floating AI Assistant FAB -->
+  <button onclick="openAIAssistant()" class="ai-fab bg-gradient-to-tr from-indigo-600 to-violet-600 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-2.5 border border-indigo-400 hover:scale-105 transition">
+    <div class="w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center text-sm">
+      <i class="fa-solid fa-robot"></i>
+    </div>
+    <div class="text-left hidden sm:block">
+      <span class="block text-[10px] uppercase font-bold tracking-widest opacity-80" data-i18n="aiAssistant">AI Assistant</span>
+      <span class="text-xs font-extrabold" data-i18n="tapToSpeak">Ask Business AI</span>
+    </div>
   </button>
 
-  <!-- MODAL: AI Voice Assistant Chat -->
-  <div id="modalAIAssistant" class="fixed inset-0 z-[55] bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 flex flex-col h-[70vh]">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-        <div>
-          <h3 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
-            <i class="fa-solid fa-robot text-indigo-600"></i> <span data-i18n="aiAssistant">AI Business Assistant</span>
-          </h3>
-          <p class="text-[10px] text-slate-500" data-i18n="aiSub">Ask about your sales, profit, or stock.</p>
+  <!-- Bottom Mobile Navigation Bar -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-4 z-40 shadow-lg">
+    <div class="max-w-md mx-auto flex justify-around items-center" id="bottomNavContainer">
+      <!-- Dynamically rendered based on role -->
+    </div>
+  </nav>
+
+  <!-- ONBOARDING & WELCOME WIZARD (Steps 1 to 5 with Previous & Next) -->
+  <div id="modalOnboarding" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-6 border border-slate-100 overflow-hidden relative">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm">V+</div>
+          <span class="font-black text-slate-900 text-base" data-i18n="setupTitle">VyaparPlus Setup</span>
         </div>
+        <div class="flex items-center gap-1 text-xs font-bold text-slate-400">
+          <span id="stepIndicator" class="text-emerald-600">Step 1</span> of 5
+        </div>
+      </div>
+
+      <!-- STEP 1: WELCOME INTRO -->
+      <div id="wizardStep1" class="wizard-step space-y-6 text-center py-4">
+        <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-inner">
+          <i class="fa-solid fa-store"></i>
+        </div>
+        <div class="space-y-2">
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight" data-i18n="welcomeTitle">Welcome to VyaparPlus</h2>
+          <p class="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed" data-i18n="welcomeDesc">
+            Your smart platform for vendors and kirana store owners. Manage sales, digital payments, khata credit, and inventory effortlessly.
+          </p>
+        </div>
+        <button onclick="showWizardStep(2)" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl text-sm shadow-lg transition" data-i18n="startBtn">
+          Start <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </div>
+
+      <!-- STEP 2: LANGUAGE -->
+      <div id="wizardStep2" class="wizard-step hidden space-y-4">
+        <div>
+          <h3 class="text-xl font-extrabold text-slate-900" data-i18n="chooseLang">Choose Your Language</h3>
+          <p class="text-xs text-slate-500" data-i18n="selectLangSub">Select preferred language for app interface:</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="setWizardLang('en')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇬🇧</span> English</button>
+          <button onclick="setWizardLang('hi')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> हिंदी</button>
+          <button onclick="setWizardLang('pa')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> ਪੰਜਾਬੀ</button>
+          <button onclick="setWizardLang('gu')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> ગુજરાતી</button>
+          <button onclick="setWizardLang('mr')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> मराठी</button>
+          <button onclick="setWizardLang('bn')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> বাংলা</button>
+          <button onclick="setWizardLang('ta')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> தமிழ்</button>
+          <button onclick="setWizardLang('te')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> తెలుగు</button>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button onclick="showWizardStep(1)" class="w-1/3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Back</button>
+          <button onclick="showWizardStep(3)" class="w-2/3 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs">Next →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: ROLE (Vendor & Kirana only) -->
+      <div id="wizardStep3" class="wizard-step hidden space-y-4">
+        <div>
+          <h3 class="text-xl font-extrabold text-slate-900" data-i18n="selectCategory">Select Business Category</h3>
+        </div>
+        <div class="space-y-3">
+          <button onclick="setWizardRole('vendor')" class="w-full p-4 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left flex items-center justify-between group">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-basket-shopping"></i></div>
+              <div>
+                <h4 class="font-bold text-slate-900 text-xs" data-i18n="vendorRole">Vendor / Hawker</h4>
+                <p class="text-[10px] text-slate-500" data-i18n="vendorRoleSub">Quick Cash/Online entries & AI</p>
+              </div>
+            </div>
+          </button>
+          <button onclick="setWizardRole('shopkeeper')" class="w-full p-4 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left flex items-center justify-between group">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-shop"></i></div>
+              <div>
+                <h4 class="font-bold text-slate-900 text-xs" data-i18n="shopkeeperRole">Shopkeeper / Kirana</h4>
+                <p class="text-[10px] text-slate-500" data-i18n="shopkeeperRoleSub">POS billing & Inventory</p>
+              </div>
+            </div>
+          </button>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button onclick="showWizardStep(2)" class="w-1/3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Back</button>
+          <button onclick="showWizardStep(4)" class="w-2/3 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs">Next →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: PROFILE -->
+      <div id="wizardStep4" class="wizard-step hidden space-y-4">
+        <div><h3 class="text-xl font-extrabold text-slate-900" data-i18n="createProfile">Create Profile</h3></div>
+        <form onsubmit="handleWizardProfileSubmit(event)" class="space-y-3">
+          <input type="text" id="wizUserName" required placeholder="Your Name" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500">
+          <input type="tel" id="wizUserPhone" required pattern="[0-9]{10}" placeholder="10-digit mobile" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500">
+          <input type="text" id="wizStoreName" required placeholder="Business Name" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500">
+          <div class="flex gap-2 pt-2">
+            <button type="button" onclick="showWizardStep(3)" class="w-1/3 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Back</button>
+            <button type="submit" class="w-2/3 py-3 bg-emerald-600 text-white font-bold rounded-xl text-xs" data-i18n="continue">Continue →</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- STEP 5: TRIAL ACTIVATION -->
+      <div id="wizardStep5" class="wizard-step hidden space-y-4">
+        <div class="text-center">
+          <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xl mx-auto mb-2"><i class="fa-solid fa-gift"></i></div>
+          <h3 class="text-xl font-extrabold text-slate-900" data-i18n="trialActivated">15-Day Free Trial Activated!</h3>
+        </div>
+        <div id="trialPlanDetailsCard" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3"></div>
+        <div class="flex gap-2 pt-2">
+          <button onclick="showWizardStep(4)" class="w-1/3 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Back</button>
+          <button onclick="completeOnboarding()" class="w-2/3 py-3 bg-emerald-600 text-white font-black rounded-xl text-xs" data-i18n="launchPortal">🚀 Launch Portal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AI Voice Business Assistant -->
+  <div id="modalAIAssistant" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
+          <i class="fa-solid fa-robot text-indigo-600"></i> <span data-i18n="aiAssistant">AI Business Assistant</span>
+        </h3>
         <button onclick="closeModal('modalAIAssistant')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
 
-      <div id="aiChatLog" class="flex-grow overflow-y-auto space-y-3 pr-1 text-xs flex flex-col">
-        <div class="flex gap-2 w-5/6">
+      <div id="aiChatLog" class="bg-slate-50 p-3 rounded-2xl border border-slate-200 h-64 overflow-y-auto space-y-3 text-xs">
+        <div class="flex gap-2">
           <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-robot text-[10px]"></i></div>
-          <div class="bg-slate-100 p-2.5 rounded-r-xl rounded-bl-xl text-slate-700" data-i18n="aiWelcomeText">
-            Hello! I am your AI assistant. You can ask me things about your revenue, profit, or inventory stock!
+          <div class="bg-slate-100 text-slate-700 p-2.5 rounded-r-xl rounded-bl-xl" data-i18n="aiWelcomeText">
+            Hello! I am your AI assistant. You can ask me things like revenue, profit, or stock.
           </div>
         </div>
       </div>
 
-      <div class="border-t border-slate-100 pt-3 text-center">
-        <button id="btnAiMic" onclick="toggleAIChatVoice()" class="w-16 h-16 bg-indigo-600 text-white rounded-full mx-auto flex items-center justify-center text-2xl shadow-lg hover:bg-indigo-500 transition">
-          <i class="fa-solid fa-microphone"></i>
+      <div class="flex items-center justify-between pt-2">
+        <span id="aiListeningStatus" class="text-xs text-slate-400 font-medium" data-i18n="tapToSpeak">Tap to speak</span>
+        <button id="btnAiMic" onclick="toggleAIChatVoice()" class="w-12 h-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-lg transition">
+          <i class="fa-solid fa-microphone text-lg"></i>
         </button>
-        <p id="aiListeningStatus" class="text-[10px] text-slate-500 font-medium mt-2" data-i18n="tapToSpeak">Tap to speak</p>
       </div>
     </div>
   </div>
@@ -562,120 +627,7 @@
     </div>
   </div>
 
-  <!-- Bottom Mobile Navigation Bar -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-4 z-40 shadow-lg">
-    <div class="max-w-md mx-auto flex justify-around items-center" id="bottomNavContainer">
-      <!-- Dynamically rendered based on role -->
-    </div>
-  </nav>
-
-  <!-- ONBOARDING & WELCOME WIZARD -->
-  <div id="modalOnboarding" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-6 border border-slate-100 overflow-hidden relative">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm">V+</div>
-          <span class="font-black text-slate-900 text-base" data-i18n="setupTitle">VyaparPlus Setup</span>
-        </div>
-        <div class="flex items-center gap-1 text-xs font-bold text-slate-400">
-          <span id="stepIndicator" class="text-emerald-600">Step 1</span> of 5
-        </div>
-      </div>
-
-      <!-- STEP 1: WELCOME INTRO WITH START BUTTON -->
-      <div id="wizardStep1" class="wizard-step space-y-6 text-center py-4">
-        <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-inner">
-          <i class="fa-solid fa-store"></i>
-        </div>
-        <div class="space-y-2">
-          <h2 class="text-2xl font-black text-slate-900 tracking-tight" data-i18n="welcomeTitle">Welcome to VyaparPlus</h2>
-          <p class="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed" data-i18n="welcomeDesc">
-            Your smart platform for vendors, kirana store owners, and wholesalers. Manage sales, digital payments, khata credit, and inventory effortlessly.
-          </p>
-        </div>
-        <button onclick="showWizardStep(2)" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl text-sm shadow-lg transition" data-i18n="startBtn">
-          Start <i class="fa-solid fa-arrow-right ml-1"></i>
-        </button>
-      </div>
-
-      <!-- STEP 2: LANGUAGE -->
-      <div id="wizardStep2" class="wizard-step hidden space-y-4">
-        <div>
-          <h3 class="text-xl font-extrabold text-slate-900" data-i18n="chooseLang">Choose Your Language</h3>
-          <p class="text-xs text-slate-500" data-i18n="selectLangSub">Select preferred language for app interface:</p>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <button onclick="setWizardLang('en')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇬🇧</span> English</button>
-          <button onclick="setWizardLang('hi')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> हिंदी</button>
-          <button onclick="setWizardLang('pa')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> ਪੰਜਾਬੀ</button>
-          <button onclick="setWizardLang('gu')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> ગુજરાતી</button>
-          <button onclick="setWizardLang('mr')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> मराठी</button>
-          <button onclick="setWizardLang('bn')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> বাংলা</button>
-          <button onclick="setWizardLang('ta')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> தமிழ்</button>
-          <button onclick="setWizardLang('te')" class="p-3 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left font-bold text-xs flex items-center gap-3"><span class="text-xl">🇮🇳</span> తెలుగు</button>
-        </div>
-      </div>
-
-      <!-- STEP 3: ROLE -->
-      <div id="wizardStep3" class="wizard-step hidden space-y-4">
-        <div>
-          <h3 class="text-xl font-extrabold text-slate-900" data-i18n="selectCategory">Select Business Category</h3>
-        </div>
-        <div class="space-y-3">
-          <button onclick="setWizardRole('vendor')" class="w-full p-4 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left flex items-center justify-between group">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-basket-shopping"></i></div>
-              <div>
-                <h4 class="font-bold text-slate-900 text-xs" data-i18n="vendorRole">Vendor / Hawker</h4>
-                <p class="text-[10px] text-slate-500" data-i18n="vendorRoleSub">Quick Cash/Online entries & AI</p>
-              </div>
-            </div>
-          </button>
-          <button onclick="setWizardRole('shopkeeper')" class="w-full p-4 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left flex items-center justify-between group">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-shop"></i></div>
-              <div>
-                <h4 class="font-bold text-slate-900 text-xs" data-i18n="shopkeeperRole">Shopkeeper / Kirana</h4>
-                <p class="text-[10px] text-slate-500" data-i18n="shopkeeperRoleSub">POS billing & Inventory</p>
-              </div>
-            </div>
-          </button>
-          <button onclick="setWizardRole('wholesaler')" class="w-full p-4 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl text-left flex items-center justify-between group">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-warehouse"></i></div>
-              <div>
-                <h4 class="font-bold text-slate-900 text-xs" data-i18n="wholesalerRole">Wholesaler / Distributor</h4>
-                <p class="text-[10px] text-slate-500" data-i18n="wholesalerRoleSub">Receive supply orders</p>
-              </div>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <!-- STEP 4: PROFILE -->
-      <div id="wizardStep4" class="wizard-step hidden space-y-4">
-        <div><h3 class="text-xl font-extrabold text-slate-900" data-i18n="createProfile">Create Profile</h3></div>
-        <form onsubmit="handleWizardProfileSubmit(event)" class="space-y-3">
-          <input type="text" id="wizUserName" required placeholder="Your Name" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500">
-          <input type="tel" id="wizUserPhone" required pattern="[0-9]{10}" placeholder="10-digit mobile" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500">
-          <input type="text" id="wizStoreName" required placeholder="Business Name" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500">
-          <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl text-xs" data-i18n="continue">Continue</button>
-        </form>
-      </div>
-
-      <!-- STEP 5: TRIAL ACTIVATION -->
-      <div id="wizardStep5" class="wizard-step hidden space-y-4">
-        <div class="text-center">
-          <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xl mx-auto mb-2"><i class="fa-solid fa-gift"></i></div>
-          <h3 class="text-xl font-extrabold text-slate-900" data-i18n="trialActivated">15-Day Free Trial Activated!</h3>
-        </div>
-        <div id="trialPlanDetailsCard" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3"></div>
-        <button onclick="completeOnboarding()" class="w-full py-3 bg-emerald-600 text-white font-black rounded-xl text-xs" data-i18n="launchPortal">🚀 Launch My Portal</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Subscription Modal (₹49) with UPI/QR -->
+  <!-- MODAL: Subscription with UPI QR Code -->
   <div id="modalSubscription" class="fixed inset-0 z-[60] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5">
       <div class="flex justify-between items-center">
@@ -693,7 +645,6 @@
         <p class="text-[11px] text-amber-800" data-i18n="qrDesc">Scan QR to pay ₹49 via UPI and instantly unlock AI Voice, Online Payments & GST Analyzer.</p>
       </div>
 
-      <!-- UPI QR Box for Subscription -->
       <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col items-center justify-center space-y-2">
         <div class="w-32 h-32 bg-white p-2 rounded-xl border border-slate-200 shadow-inner flex items-center justify-center">
           <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi://pay?pa=vyaparplus@upi&pn=VyaparPlus&am=49&cu=INR" alt="Subscription QR" class="w-full h-full object-contain">
@@ -707,6 +658,7 @@
     </div>
   </div>
 
+  <!-- MODAL: Cash Sale -->
   <div id="modalCashSale" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
       <div class="flex justify-between items-center">
@@ -722,6 +674,7 @@
     </div>
   </div>
 
+  <!-- MODAL: Khata Entry -->
   <div id="modalKhata" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
       <div class="flex justify-between items-center">
@@ -737,6 +690,7 @@
     </div>
   </div>
 
+  <!-- MODAL: Add Kirana Stock -->
   <div id="modalAddKiranaStock" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
       <div class="flex justify-between items-center">
@@ -755,7 +709,7 @@
     </div>
   </div>
 
-  <!-- MODAL: Account & Profile Settings -->
+  <!-- MODAL: Account & Profile Settings (With Delete Account) -->
   <div id="modalAccount" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
       <div class="flex justify-between items-center">
@@ -780,10 +734,9 @@
 
       <div class="space-y-2">
         <label class="block text-xs font-bold text-slate-600" data-i18n="switchMode">Switch Mode:</label>
-        <div class="grid grid-cols-3 gap-2">
-          <button onclick="switchUserRoleMode('vendor')" class="p-2 border border-slate-200 hover:bg-emerald-50 rounded-xl text-[11px] font-bold" data-i18n="vendor">Vendor</button>
-          <button onclick="switchUserRoleMode('shopkeeper')" class="p-2 border border-slate-200 hover:bg-indigo-50 rounded-xl text-[11px] font-bold" data-i18n="kirana">Kirana</button>
-          <button onclick="switchUserRoleMode('wholesaler')" class="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-[11px] font-bold" data-i18n="wholesaler">Wholesaler</button>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="switchUserRoleMode('vendor')" class="p-2.5 border border-slate-200 hover:bg-emerald-50 rounded-xl text-xs font-bold" data-i18n="vendor">Vendor</button>
+          <button onclick="switchUserRoleMode('shopkeeper')" class="p-2.5 border border-slate-200 hover:bg-indigo-50 rounded-xl text-xs font-bold" data-i18n="kirana">Kirana</button>
         </div>
       </div>
 
@@ -805,7 +758,6 @@
       sales: JSON.parse(localStorage.getItem('vp_sales')) || [],
       khata: JSON.parse(localStorage.getItem('vp_khata')) || [],
       kiranaInventory: JSON.parse(localStorage.getItem('vp_kirana_stock')) || [],
-      wholesalerOrders: JSON.parse(localStorage.getItem('vp_wh_orders')) || [],
       wholesalers: JSON.parse(localStorage.getItem('vp_wholesalers_list')) || [
         {
           id: 'wh_1', name: 'Gupta Wholesale', phone: '9876543210', lat: 30.7333, lng: 76.7794,
@@ -830,9 +782,7 @@
         khataPending: "Khata Pending Dues", manageKhata: "Manage Khata →", posCounter: "Fast POS Counter Billing", cartTotal: "Cart Total",
         selectStoreItem: "-- Select Store Item --", addItem: "+ Add Item", item: "Item", price: "Price", qty: "Qty", total: "Total", action: "Action",
         cashPaid: "Cash Paid", onlinePay: "Online Pay", addToKhata: "Add to Khata", kiranaInventory: "Kirana Inventory", voiceAdd: "Voice Add", new: "New",
-        listeningVoice: "Listening... Say e.g. 'Add Sugar price 50 quantity 10'", wholesaleDistributor: "Wholesale Distributor Center",
-        wholesalerSub: "Accept order requests from local shopkeepers. Manage your catalog.", incomingOrders: "Incoming Supply Orders",
-        publicCatalog: "Public Bulk Catalog", addStockItem: "+ Add Stock Item", digitalKhata: "Digital Khata Ledger", khataSub: "Track pending credit dues. Settlement syncs to Revenue!",
+        listeningVoice: "Listening... Say e.g. 'Add Sugar price 50 quantity 10'", digitalKhata: "Digital Khata Ledger", khataSub: "Track pending credit dues. Settlement syncs to Revenue!",
         addCustomerCredit: "Add Customer Credit", wholesalersNearby: "Wholesale Distributors Nearby", detectGps: "Detect My GPS Location",
         currentStoreLoc: "Your Current Store Location", verifiedWholesalers: "Verified Wholesale Outlets", aiAssistant: "AI Business Assistant",
         aiSub: "Ask about your sales, profit, or stock.", aiWelcomeText: "Hello! I am your AI assistant. You can ask me things like revenue, profit, or stock.",
@@ -841,15 +791,14 @@
         gstApplicability: "GST Applicability:", estTaxPayable: "Est. Tax Payable:", smsNotificationStatus: "SMS Notification Status:",
         recentDailyHistory: "Recent Daily History", onlinePaymentApp: "Online Payment App", onlinePaymentDesc: "Record incoming payments from third-party apps (Paytm, GPay, Bank).",
         customerRefId: "Customer / Ref ID", receivedAmount: "Received Amount (₹) *", logOnlinePayment: "✓ Log Online Payment",
-        setupTitle: "VyaparPlus Setup", welcomeTitle: "Welcome to VyaparPlus", welcomeDesc: "Your smart platform for vendors, kirana store owners, and wholesalers. Manage sales, digital payments, khata credit, and inventory effortlessly.",
+        setupTitle: "VyaparPlus Setup", welcomeTitle: "Welcome to VyaparPlus", welcomeDesc: "Your smart platform for vendors and kirana store owners. Manage sales, digital payments, khata credit, and inventory effortlessly.",
         startBtn: "Start", chooseLang: "Choose Your Language", selectLangSub: "Select preferred language for app interface:", selectCategory: "Select Business Category",
         vendorRole: "Vendor / Hawker", vendorRoleSub: "Quick Cash/Online entries & AI", shopkeeperRole: "Shopkeeper / Kirana", shopkeeperRoleSub: "POS billing & Inventory",
-        wholesalerRole: "Wholesaler / Distributor", wholesalerRoleSub: "Receive supply orders", createProfile: "Create Profile", continue: "Continue",
-        trialActivated: "15-Day Free Trial Activated!", launchPortal: "🚀 Launch My Portal", unlockPremium: "Unlock Premium (₹49/mo)", trialStatus: "Trial Status",
-        qrDesc: "Scan QR to pay ₹49 via UPI and instantly unlock AI Voice, Online Payments & GST Analyzer.", iHavePaid: "✓ I Have Paid ₹49 via UPI — Activate Pro",
-        recordCashSale: "Record Cash Sale", saveCashSale: "Save Cash Sale", addCredit: "Add Credit", saveToKhata: "Save to Khata Ledger", addStock: "Add Stock",
-        addItemBtn: "Add Item", accountSettings: "Account Settings", profileName: "Profile Name:", businessName: "Business Name:", mobileNumber: "Mobile Number:",
-        switchMode: "Switch Mode:", vendor: "Vendor", kirana: "Kirana", wholesaler: "Wholesaler", deleteAccount: "Delete Account"
+        createProfile: "Create Profile", continue: "Continue", trialActivated: "15-Day Free Trial Activated!", launchPortal: "🚀 Launch My Portal",
+        unlockPremium: "Unlock Premium (₹49/mo)", trialStatus: "Trial Status", qrDesc: "Scan QR to pay ₹49 via UPI and instantly unlock AI Voice, Online Payments & GST Analyzer.",
+        iHavePaid: "✓ I Have Paid ₹49 via UPI — Activate Pro", recordCashSale: "Record Cash Sale", saveCashSale: "Save Cash Sale", addCredit: "Add Credit",
+        saveToKhata: "Save to Khata Ledger", addStock: "Add Stock", addItemBtn: "Add Item", accountSettings: "Account Settings", profileName: "Profile Name:",
+        businessName: "Business Name:", mobileNumber: "Mobile Number:", switchMode: "Switch Mode:", vendor: "Vendor", kirana: "Kirana", deleteAccount: "Delete Account"
       },
       hi: {
         todayRevenue: "कुल आय", cashSales: "नकद बिक्री", netProfit: "शुद्ध लाभ", khataCredit: "खाता उधार", openKhata: "खाता बही खोलें",
@@ -860,9 +809,7 @@
         khataPending: "खाता लंबित बकाया", manageKhata: "खाता प्रबंधित करें →", posCounter: "फास्ट पीओएस काउंटर बिलिंग", cartTotal: "कार्ट कुल",
         selectStoreItem: "-- स्टोर आइटम चुनें --", addItem: "+ आइटम जोड़ें", item: "आइटम", price: "मूल्य", qty: "मात्रा", total: "कुल", action: "कार्रवाई",
         cashPaid: "नकद भुगतान", onlinePay: "ऑनलाइन पे", addToKhata: "खाता में जोड़ें", kiranaInventory: "किराना इन्वेंट्री", voiceAdd: "वॉइस ऐड", new: "नया",
-        listeningVoice: "सुन रहे हैं... बोलें जैसे 'चीनी मूल्य 50 मात्रा 10 जोड़ें'", wholesaleDistributor: "थोक वितरक केंद्र",
-        wholesalerSub: "स्थानीय दुकानदारों से ऑर्डर स्वीकार करें। कैटलॉग प्रबंधित करें।", incomingOrders: "आने वाले आपूर्ति ऑर्डर",
-        publicCatalog: "सार्वजनिक थोक कैटलॉग", addStockItem: "+ स्टॉक आइटम जोड़ें", digitalKhata: "डिजिटल खाता बही", khataSub: "उधार बकाया ट्रैक करें।",
+        listeningVoice: "सुन रहे हैं... बोलें जैसे 'चीनी मूल्य 50 मात्रा 10 जोड़ें'", digitalKhata: "डिजिटल खाता बही", khataSub: "उधार बकाया ट्रैक करें।",
         addCustomerCredit: "ग्राहक क्रेडिट जोड़ें", wholesalersNearby: "निकटवर्ती थोक वितरक", detectGps: "जीपीएस स्थान पहचानें",
         currentStoreLoc: "आपका वर्तमान स्टोर स्थान", verifiedWholesalers: "सत्यापित थोक आउटलेट", aiAssistant: "एआई बिजनेस असिस्टेंट",
         aiSub: "अपनी बिक्री, लाभ या स्टॉक के बारे में पूछें।", aiWelcomeText: "नमस्ते! मैं आपका एआई सहायक हूं। आप मुझसे राजस्व, लाभ या स्टॉक के बारे में पूछ सकते हैं।",
@@ -871,15 +818,15 @@
         gstApplicability: "जीएसटी प्रयोज्यता:", estTaxPayable: "अनुमानित कर देय:", smsNotificationStatus: "एसएमएस सूचना स्थिति:",
         recentDailyHistory: "हाल का दैनिक इतिहास", onlinePaymentApp: "ऑनलाइन भुगतान ऐप", onlinePaymentDesc: "तृतीय-पक्ष ऐप्स से आने वाले भुगतान दर्ज करें।",
         customerRefId: "ग्राहक / संदर्भ आईडी", receivedAmount: "प्राप्त राशि (₹) *", logOnlinePayment: "✓ ऑनलाइन भुगतान दर्ज करें",
-        setupTitle: "व्यापारप्लस सेटअप", welcomeTitle: "व्यापारप्लस में आपका स्वागत है", welcomeDesc: "विक्रेताओं, किराना दुकानदारों और थोक विक्रेताओं के लिए आपका स्मार्ट प्लेटफॉर्म।",
+        setupTitle: "व्यापारप्लस सेटअप", welcomeTitle: "व्यापारप्लस में आपका स्वागत है", welcomeDesc: "विक्रेताओं और किराना दुकानदारों के लिए आपका स्मार्ट प्लेटफॉर्म।",
         startBtn: "शुरू करें", chooseLang: "अपनी भाषा चुनें", selectLangSub: "ऐप इंटरफ़ेस के लिए भाषा चुनें:", selectCategory: "व्यवसाय श्रेणी चुनें",
         vendorRole: "विक्रेता / फेरीवाला", vendorRoleSub: "त्वरित नकद/ऑनलाइन प्रविष्टियां और एआई", shopkeeperRole: "दुकानदार / किराना", shopkeeperRoleSub: "पीओएस बिलिंग और इन्वेंट्री",
-        wholesalerRole: "थोक विक्रेता / वितरक", wholesalerRoleSub: "आपूर्ति आदेश प्राप्त करें", createProfile: "प्रोफ़ाइल बनाएं", continue: "जारी रखें",
-        trialActivated: "15-दिन का निःशुल्क परीक्षण सक्रिय!", launchPortal: "🚀 मेरा पोर्टल लॉन्च करें", unlockPremium: "प्रीमियम अनलॉक करें (₹49/माह)", trialStatus: "परीक्षण स्थिति",
-        qrDesc: "UPI के माध्यम से ₹49 का भुगतान करने के लिए QR स्कैन करें।", iHavePaid: "✓ मैंने UPI के माध्यम से ₹49 का भुगतान किया है — प्रो सक्रिय करें",
-        recordCashSale: "नकद बिक्री दर्ज करें", saveCashSale: "नकद बिक्री सहेजें", addCredit: "क्रेडिट जोड़ें", saveToKhata: "खाता बही में सहेजें", addStock: "स्टॉक जोड़ें",
-        addItemBtn: "आइटम जोड़ें", accountSettings: "खाता सेटिंग", profileName: "प्रोफाइल नाम:", businessName: "व्यवसाय नाम:", mobileNumber: "मोबाइल नंबर:",
-        switchMode: "मोड बदलें:", vendor: "विक्रेता", kirana: "किराना", wholesaler: "थोक विक्रेता", deleteAccount: "खाता हटाएं"
+        createProfile: "प्रोफ़ाइल बनाएं", continue: "जारी रखें", trialActivated: "15-दिन का निःशुल्क परीक्षण सक्रिय!", launchPortal: "🚀 मेरा पोर्टल लॉन्च करें",
+        unlockPremium: "प्रीमियम अनलॉक करें (₹49/माह)", trialStatus: "परीक्षण स्थिति", qrDesc: "UPI के माध्यम से ₹49 का भुगतान करने के लिए QR स्कैन करें।",
+        iHavePaid: "✓ मैंने UPI के माध्यम से ₹49 का भुगतान किया है — प्रो सक्रिय करें", recordCashSale: "नकद बिक्री दर्ज करें", saveCashSale: "नकद बिक्री सहेजें",
+        addCredit: "क्रेडिट जोड़ें", saveToKhata: "खाता बही में सहेजें", addStock: "स्टॉक जोड़ें", addItemBtn: "आइटम जोड़ें", accountSettings: "खाता सेटिंग",
+        profileName: "प्रोफाइल नाम:", businessName: "व्यवसाय नाम:", mobileNumber: "मोबाइल नंबर:", switchMode: "मोड बदलें:", vendor: "विक्रेता",
+        kirana: "किराना", deleteAccount: "खाता हटाएं"
       },
       pa: {
         todayRevenue: "ਕੁੱਲ ਆਮਦਨ", cashSales: "ਨਕਦ ਵਿਕਰੀ", netProfit: "ਸ਼ੁੱਧ ਲਾਭ", khataCredit: "ਖਾਤਾ ਉਧਾਰ", openKhata: "ਖਾਤਾ ਖੋਲ੍ਹੋ",
@@ -890,26 +837,22 @@
         khataPending: "ਖਾਤਾ ਬਕਾਇਆ", manageKhata: "ਖਾਤਾ ਪ੍ਰਬੰਧਿਤ ਕਰੋ →", posCounter: "ਫਾਸਟ ਪੀ.ਓ.ਐੱਸ ਬਿਲਿੰਗ", cartTotal: "ਕਾਰਟ ਕੁੱਲ",
         selectStoreItem: "-- ਆਈਟਮ ਚੁਣੋ --", addItem: "+ ਆਈਟਮ ਸ਼ਾਮਲ ਕਰੋ", item: "ਆਈਟਮ", price: "ਕੀਮਤ", qty: "ਮਾਤਰਾ", total: "ਕੁੱਲ", action: "ਕਾਰਵਾਈ",
         cashPaid: "ਨਕਦ ਭੁਗਤਾਨ", onlinePay: "ਆਨਲਾਈਨ ਪੇ", addToKhata: "ਖਾਤੇ ਵਿੱਚ ਪਾਓ", kiranaInventory: "ਕਿਰਾਣਾ ਇਨਵੈਂਟਰੀ", voiceAdd: "ਭਾਸ਼ਣ ਜੋੜੋ", new: "ਨਵਾਂ",
-        listeningVoice: "ਸੁਣ ਰਿਹਾ ਹੈ...", wholesaleDistributor: "ਥੋਕ ਵਿਤਰਕ ਕੇਂਦਰ", wholesalerSub: "ਸਥਾਨਕ ਦੁਕਾਨਦਾਰਾਂ ਤੋਂ ਆਰਡਰ ਸਵੀਕਾਰ ਕਰੋ।",
-        incomingOrders: "ਆਉਣ ਵਾਲੇ ਸਪਲਾਈ ਆਰਡਰ", publicCatalog: "ਜਨਤਕ ਥੋਕ ਕੈਟਾਲਾਗ", addStockItem: "+ ਸਟਾਕ ਆਈਟਮ ਸ਼ਾਮਲ ਕਰੋ",
-        digitalKhata: "ਡਿਜੀਟਲ ਖਾਤਾ ਬਹੀ", khataSub: "ਬਕਾਇਆ ਕ੍ਰੈਡਿਟ ਟਰੈਕ ਕਰੋ।", addCustomerCredit: "ਗਾਹਕ ਕ੍ਰੈਡਿਟ ਸ਼ਾਮਲ ਕਰੋ",
+        listeningVoice: "ਸੁਣ ਰਿਹਾ ਹੈ...", digitalKhata: "ਡਿਜੀਟਲ ਖਾਤਾ ਬਹੀ", khataSub: "ਬਕਾਇਆ ਕ੍ਰੈਡਿਟ ਟਰੈਕ ਕਰੋ।", addCustomerCredit: "ਗਾਹਕ ਕ੍ਰੈਡਿਟ ਸ਼ਾਮਲ ਕਰੋ",
         wholesalersNearby: "ਨੇੜਲੇ ਥੋਕ ਵਿਤਰਕ", detectGps: "ਜੀ.ਪੀ.ਐੱਸ ਸਥਾਨ ਪਤਾ ਕਰੋ", currentStoreLoc: "ਤੁਹਾਡਾ ਮੌਜੂਦਾ ਸਟੋਰ ਸਥਾਨ",
         verifiedWholesalers: "ਤਸਦੀਕ شدہ ਥੋਕ ਆਉਟਲੈਟਸ", aiAssistant: "ਏ.ਆਈ ਬਿਜ਼ਨਸ ਅਸਿਸਟੈਂਟ", aiSub: "ਆਪਣੀ ਵਿਕਰੀ, ਲਾਭ ਜਾਂ ਸਟਾਕ ਬਾਰੇ ਪੁੱਛੋ।",
-        aiWelcomeText: "ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! ਮੈਂ ਤੁਹਾਡਾ ਏ.ਆਈ ਸਹਾਇਕ ਹਾਂ।", aiAssistant: "ਏ.ਆਈ ਬਿਜ਼ਨਸ ਅਸਿਸਟੈਂਟ", tapToSpeak: "ਬੋਲਣ ਲਈ ਟੈਪ ਕਰੋ",
-        reportsGstTitle: "ਰਿਪੋਰਟਾਂ ਅਤੇ ਜੀ.ਐੱਸ.ਟੀ ਸਥਿਤੀ", todaysTotal: "ਅੱਜ ਦਾ ਕੁੱਲ", thisMonth: "ਇਸ ਮਹੀਨੇ", smartGstAnalyzer: "ਸਮਾਰਟ ਜੀ.ਐੱਸ.ਟੀ ਵਿਸ਼ਲੇਸ਼ਕ",
-        gstAnalyzerDesc: "ਤੁਹਾਡੀ ਮਾਸਿਕ ਵਿਕਰੀ ਦੇ ਆਧਾਰ 'ਤੇ, ਅਸੀਂ ਆਪਣੇ ਆਪ ਗਣਨਾ ਕਰਦੇ ਹਾਂ।", gstApplicability: "ਜੀ.ਐੱਸ.ਟੀ ਲਾਗੂ:", estTaxPayable: "ਅਨੁਮਾਨਿਤ ਟੈਕਸ:",
-        smsNotificationStatus: "ਸੁਨੇਹਾ ਸਥਿਤੀ:", recentDailyHistory: "ਹਾਲੀਆ ਰੋਜ਼ਾਨਾ ਇਤਿਹਾਸ", onlinePaymentApp: "ਆਨਲਾਈਨ ਭੁਗਤਾਨ ਐਪ",
-        onlinePaymentDesc: "ਤੀਜੀ-ਧਿਰ ਐਪਸ ਤੋਂ ਆਉਣ ਵਾਲੇ ਭੁਗਤਾਨ ਦਰਜ ਕਰੋ।", customerRefId: "ਗਾਹਕ / ਰੈਫ ਆਈਡੀ", receivedAmount: "ਪ੍ਰਾਪਤ ਰਕਮ (₹) *",
+        aiWelcomeText: "ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! ਮੈਂ ਤੁਹਾਡਾ ਏ.ਆਈ ਸਹਾਇਕ ਹਾਂ।", tapToSpeak: "ਬੋਲਣ ਲਈ ਟੈਪ ਕਰੋ", reportsGstTitle: "ਰਿਪੋਰਟਾਂ ਅਤੇ ਜੀ.ਐੱਸ.ਟੀ ਸਥਿਤੀ",
+        todaysTotal: "ਅੱਜ ਦਾ ਕੁੱਲ", thisMonth: "ਇਸ ਮਹੀਨੇ", smartGstAnalyzer: "ਸਮਾਰਟ ਜੀ.ਐੱਸ.ਟੀ ਵਿਸ਼ਲੇਸ਼ਕ", gstAnalyzerDesc: "ਤੁਹਾਡੀ ਮਾਸਿਕ ਵਿਕਰੀ ਦੇ ਆਧਾਰ 'ਤੇ ਗਣਨਾ ਕੀਤੀ ਜਾਂਦੀ ਹੈ।",
+        gstApplicability: "ਜੀ.ਐੱਸ.ਟੀ ਲਾਗੂ:", estTaxPayable: "ਅਨੁਮਾਨਿਤ ਟੈਕਸ:", smsNotificationStatus: "ਸੁਨੇਹਾ ਸਥਿਤੀ:", recentDailyHistory: "ਹਾਲੀਆ ਰੋਜ਼ਾਨਾ ਇਤਿਹਾਸ",
+        onlinePaymentApp: "ਆਨਲਾਈਨ ਭੁਗਤਾਨ ਐਪ", onlinePaymentDesc: "ਤੀਜੀ-ਧਿਰ ਐਪਸ ਤੋਂ ਆਉਣ ਵਾਲੇ ਭੁਗਤਾਨ ਦਰਜ ਕਰੋ।", customerRefId: "ਗਾਹਕ ਆਈਡੀ", receivedAmount: "ਪ੍ਰਾਪਤ ਰਕਮ (₹) *",
         logOnlinePayment: "✓ ਆਨਲਾਈਨ ਭੁਗਤਾਨ ਦਰਜ ਕਰੋ", setupTitle: "ਵਿਪਾਰਪਲੱਸ ਸੈੱਟਅੱਪ", welcomeTitle: "ਵਿਪਾਰਪਲੱਸ ਵਿੱਚ ਜੀ ਆਇਆਂ ਨੂੰ",
-        welcomeDesc: "ਵਿਕਰੇਤਾਵਾਂ, ਕਿਰਾਣਾ ਦੁਕਾਨਦਾਰਾਂ ਅਤੇ ਥੋਕ ਵਿਕਰੇਤਾਵਾਂ ਲਈ ਤੁਹਾਡਾ ਸਮਾਰਟ ਪਲੇਟਫਾਰਮ।", startBtn: "ਸ਼ੁਰੂ ਕਰੋ", chooseLang: "ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ",
+        welcomeDesc: "ਵਿਕਰੇਤਾਵਾਂ ਅਤੇ ਕਿਰਾਣਾ ਦੁਕਾਨਦਾਰਾਂ ਲਈ ਤੁਹਾਡਾ ਸਮਾਰਟ ਪਲੇਟਫਾਰਮ।", startBtn: "ਸ਼ੁਰੂ ਕਰੋ", chooseLang: "ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ",
         selectLangSub: "ਐਪ ਇੰਟਰਫੇਸ ਲਈ ਭਾਸ਼ਾ ਚੁਣੋ:", selectCategory: "ਵਪਾਰ ਸ਼੍ਰੇਣੀ ਚੁਣੋ", vendorRole: "ਵਿਕਰੇਤਾ / ਫੇਰੀਵਾਲਾ", vendorRoleSub: "ਤੁਰੰਤ ਨਕਦ/ਆਨਲਾਈਨ ਐਂਟਰੀਆਂ",
-        shopkeeperRole: "ਦੁਕਾਨਦਾਰ / ਕਿਰਾਣਾ", shopkeeperRoleSub: "ਪੀ.ਓ.ਐੱਸ ਬਿਲਿੰਗ ਅਤੇ ਇਨਵੈਂਟਰੀ", wholesalerRole: "ਥੋਕ ਵਿਕਰੇਤਾ / ਵਿਤਰਕ", wholesalerRoleSub: "ਸਪਲਾਈ ਆਰਡਰ ਪ੍ਰਾਪਤ ਕਰੋ",
-        createProfile: "ਪ੍ਰੋਫਾਈਲ ਬਣਾਓ", continue: "ਜਾਰੀ ਰੱਖੋ", trialActivated: "15-ਦਿਨ ਦੀ ਮੁਫਤ ਅਜ਼ਮਾਇਸ਼ ਸਰਗਰਮ!", launchPortal: "🚀 ਮੇਰਾ ਪੋਰਟਲ ਲਾਂਚ ਕਰੋ",
-        unlockPremium: "ਪ੍ਰੀਮੀਅਮ ਅਨਲੌਕ ਕਰੋ (₹49/ਮਹੀਨਾ)", trialStatus: "ਅਜ਼ਮਾਇਸ਼ ਸਥਿਤੀ", qrDesc: "UPI ਰਾਹੀਂ ₹49 ਦਾ ਭੁਗਤਾਨ ਕਰਨ ਲਈ QR ਸਕੈਨ ਕਰੋ।",
-        iHavePaid: "✓ ਮੈਂ UPI ਰਾਹੀਂ ₹49 ਦਾ ਭੁਗਤਾਨ ਕਰ ਦਿੱਤਾ ਹੈ — ਪ੍ਰੋ ਐਕਟੀਵੇਟ ਕਰੋ", recordCashSale: "ਨਕਦ ਵਿਕਰੀ ਦਰਜ ਕਰੋ", saveCashSale: "ਨਕਦ ਵਿਕਰੀ ਸੁਰੱਖਿਅਤ ਕਰੋ",
-        addCredit: "ਕ੍ਰੈਡਿਟ ਸ਼ਾਮਲ ਕਰੋ", saveToKhata: "ਖਾਤਾ ਬਹੀ ਵਿੱਚ ਸੁਰੱਖਿਅਤ ਕਰੋ", addStock: "ਸਟਾਕ ਸ਼ਾਮਲ ਕਰੋ", addItemBtn: "ਆਈਟਮ ਸ਼ਾਮਲ ਕਰੋ",
-        accountSettings: "ਖਾਤਾ ਸੈਟਿੰਗਾਂ", profileName: "ਪ੍ਰੋਫਾਈਲ ਨਾਮ:", businessName: "ਕਾਰੋਬਾਰ ਦਾ ਨਾਮ:", mobileNumber: "ਮੋਬਾਈਲ ਨੰਬਰ:",
-        switchMode: "ਮੋਡ ਬਦਲੋ:", vendor: "ਵਿਕਰੇਤਾ", kirana: "ਕਿਰਾਣਾ", wholesaler: "ਥੋਕ ਵਿਕਰੇਤਾ", deleteAccount: "ਖਾਤਾ ਮਿਟਾਓ"
+        shopkeeperRole: "ਦੁਕਾਨਦਾਰ / ਕਿਰਾਣਾ", shopkeeperRoleSub: "ਪੀ.ਓ.ਐੱਸ ਬਿਲਿੰਗ ਅਤੇ ਇਨਵੈਂਟਰੀ", createProfile: "ਪ੍ਰੋਫਾਈਲ ਬਣਾਓ", continue: "ਜਾਰੀ ਰੱਖੋ",
+        trialActivated: "15-ਦਿਨ ਦੀ ਮੁਫਤ ਅਜ਼ਮਾਇਸ਼ ਸਰਗਰਮ!", launchPortal: "🚀 ਮੇਰਾ ਪੋਰਟਲ ਲਾਂਚ ਕਰੋ", unlockPremium: "ਪ੍ਰੀਮੀਅਮ ਅਨਲੌਕ ਕਰੋ (₹49/ਮਹੀਨਾ)",
+        trialStatus: "ਅਜ਼ਮਾਇਸ਼ ਸਥਿਤੀ", qrDesc: "UPI ਰਾਹੀਂ ₹49 ਦਾ ਭੁਗਤਾਨ ਕਰਨ ਲਈ QR ਸਕੈਨ ਕਰੋ।", iHavePaid: "✓ ਮੈਂ UPI ਰਾਹੀਂ ₹49 ਦਾ ਭੁਗਤਾਨ ਕਰ ਦਿੱਤਾ ਹੈ — ਪ੍ਰੋ ਐਕਟੀਵੇਟ ਕਰੋ",
+        recordCashSale: "ਨਕਦ ਵਿਕਰੀ ਦਰਜ ਕਰੋ", saveCashSale: "ਨਕਦ ਵਿਕਰੀ ਸੁਰੱਖਿਅਤ ਕਰੋ", addCredit: "ਕ੍ਰੈਡਿਟ ਸ਼ਾਮਲ ਕਰੋ", saveToKhata: "ਖਾਤਾ ਬਹੀ ਵਿੱਚ ਸੁਰੱਖਿਅਤ ਕਰੋ",
+        addStock: "ਸਟਾਕ ਸ਼ਾਮਲ ਕਰੋ", addItemBtn: "ਆਈਟਮ ਸ਼ਾਮਲ ਕਰੋ", accountSettings: "ਖਾਤਾ ਸੈਟਿੰਗਾਂ", profileName: "ਪ੍ਰੋਫਾਈਲ ਨਾਮ:",
+        businessName: "ਕਾਰੋਬਾਰ ਦਾ ਨਾਮ:", mobileNumber: "ਮੋਬਾਈਲ ਨੰਬਰ:", switchMode: "ਮੋਡ ਬਦਲੋ:", vendor: "ਵਿਕਰੇਤਾ", kirana: "ਕਿਰਾਣਾ", deleteAccount: "ਖਾਤਾ ਮਿਟਾਓ"
       },
       gu: {
         todayRevenue: "કુલ આવક", cashSales: "રોકડ વેચાણ", netProfit: "ચોખ્ખો નફો", khataCredit: "ખાતા ઉધાર", openKhata: "ખાતાવહી ખોલો",
@@ -920,26 +863,22 @@
         khataPending: "ખાતા બાકી લેણાં", manageKhata: "ખાતું સંચાલિત કરો →", posCounter: "ફાસ્ટ પીએઓએસ બિલિંગ", cartTotal: "કાર્ટ કુલ",
         selectStoreItem: "-- સ્ટોર આઇટમ પસંદ કરો --", addItem: "+ આઇટમ ઉમેરો", item: "આઇટમ", price: "કિંમત", qty: "જથ્થો", total: "કુલ", action: "ક્રિયા",
         cashPaid: "રોકડ ચૂકવેલ", onlinePay: "ઓનલાઇન પે", addToKhata: "ખાતામાં ઉમેરો", kiranaInventory: "કિરાણા ઇન્વેન્ટરી", voiceAdd: "વોイス એડ", new: "નવું",
-        listeningVoice: "સાંભળી રહ્યા છીએ...", wholesaleDistributor: "જથ્થાબંધ વિતરક કેન્દ્ર", wholesalerSub: "સ્થાનિક દુકાનદારો પાસેથી ઓર્ડર સ્વીકારો.",
-        incomingOrders: "આવનારા સપ્લાય ઓર્ડર", publicCatalog: "જાહેર જથ્થાબંધ કેટેલોગ", addStockItem: "+ સ્ટોક આઇટમ ઉમેરો",
-        digitalKhata: "ડિજિટલ ખાતાવહી", khataSub: "બાકી ક્રેડિટ ટ્રેક કરો.", addCustomerCredit: "ગ્રાહક ક્રેડિટ ઉમેરો",
+        listeningVoice: "સાંભળી રહ્યા છીએ...", digitalKhata: "ડિજિટલ ખાતાવહી", khataSub: "બાકી ક્રેડિટ ટ્રેક કરો.", addCustomerCredit: "ગ્રાહક ક્રેડિટ ઉમેરો",
         wholesalersNearby: "નજીકના જથ્થાબંધ વિતરકો", detectGps: "જીપીએસ સ્થાન શોધો", currentStoreLoc: "તમારું વર્તમાન સ્ટોર સ્થાન",
         verifiedWholesalers: "ચકાસાયેલ જથ્થાબંધ આઉટલેટ્સ", aiAssistant: "એઆઈ બિઝનેસ અસિસ્ટન્ટ", aiSub: "તમારા વેચાણ, નફા કે સ્ટોક વિશે પૂછો.",
         aiWelcomeText: "નમસ્તે! હું તમારો એઆઈ સહાયક છું.", tapToSpeak: "બોલવા માટે ટેપ કરો", reportsGstTitle: "રિપોર્ટ્સ અને જીએસટી સ્થિતિ",
-        todaysTotal: "આજનો કુલ", thisMonth: "આ મહિને", smartGstAnalyzer: "સ્માર્ટ જીએસટી એનાલિઝર",
-        gstAnalyzerDesc: "તમારા માસિક વેચાણના આધારે, અમે આપમેળે ગણતરી કરીએ છીએ.", gstApplicability: "જીએસટી લાગુ:", estTaxPayable: "અંદાજિત કર ચૂકવવાપાત્ર:",
-        smsNotificationStatus: "SMS સૂચના સ્થિતિ:", recentDailyHistory: "તાજેતરનો દૈનિક ઇતિહાસ", onlinePaymentApp: "ઓનલાઇન ચુકવણી એપ્લિકેશન",
-        onlinePaymentDesc: "તૃતીય-પક્ષ એપ્લિકેશનોમાંથી આવતી ચુકવણીઓ રેકોર્ડ કરો.", customerRefId: "ગ્રાહક / રેફ આઈડી", receivedAmount: "પ્રાપ્ત રકમ (₹) *",
+        todaysTotal: "આજનો કુલ", thisMonth: "આ મહિને", smartGstAnalyzer: "સ્માર્ટ જીએસટી એનાલિઝર", gstAnalyzerDesc: "માસિક વેચાણના આધારે ગણતરી થાય છે.",
+        gstApplicability: "જીએસટી લાગુ:", estTaxPayable: "અંદાજિત કર ચૂકવવાપાત્ર:", smsNotificationStatus: "SMS સૂચના સ્થિતિ:", recentDailyHistory: "તાજેતરનો દૈનિક ઇતિહાસ",
+        onlinePaymentApp: "ઓનલાઇન ચુકવણી એપ્લિકેશન", onlinePaymentDesc: "તૃતીય-પક્ષ એપ્લિકેશનોમાંથી આવતી ચુકવણીઓ રેકોર્ડ કરો.", customerRefId: "ગ્રાહક આઈડી", receivedAmount: "પ્રાપ્ત રકમ (₹) *",
         logOnlinePayment: "✓ ઓનલાઇન ચુકવણી રેકોર્ડ કરો", setupTitle: "વ્યાપારપ્લસ સેટઅપ", welcomeTitle: "વ્યાપારપ્લસમાં સ્વાગત છે",
-        welcomeDesc: "વિક્રેતાઓ, કિરાણા દુકાનદારો અને જથ્થાબંધ વેપારીઓ માટે તમારું સ્માર્ટ પ્લેટફોર્મ.", startBtn: "શરૂ કરો", chooseLang: "તમારી ભાષા પસંદ કરો",
+        welcomeDesc: "વિક્રેતાઓ અને કિરાણા દુકાનદારો માટે તમારું સ્માર્ટ પ્લેટફોર્મ.", startBtn: "શરૂ કરો", chooseLang: "તમારી ભાષા પસંદ કરો",
         selectLangSub: "એપ ઇન્ટરફેસ માટે ભાષા પસંદ કરો:", selectCategory: "વ્યવસાય શ્રેણી પસંદ કરો", vendorRole: "વિક્રેતા / ફેરિયા", vendorRoleSub: "ઝડપી રોકડ/ઓનલાઇન એન્ટ્રીઓ",
-        shopkeeperRole: "દુકાનદાર / કિરાણા", shopkeeperRoleSub: "પીઓએસ બિલિંગ અને ઇન્વેન્ટરી", wholesalerRole: "જથ્થાબંધ વેપારી / વિતરક", wholesalerRoleSub: "સપ્લાય ઓર્ડર પ્રાપ્ત કરો",
-        createProfile: "પ્રોફાઇલ બનાવો", continue: "ચાલુ રાખો", trialActivated: "15-દિવસની મફત અજમાયશ સક્રિય!", launchPortal: "🚀 મારું પોર્ટલ લોન્ચ કરો",
-        unlockPremium: "પ્રિમિયમ અનલોક કરો (₹49/મહિનો)", trialStatus: "અજમાયશ સ્થિતિ", qrDesc: "UPI દ્વારા ₹49 ચૂકવવા માટે QR સ્કેન કરો.",
-        iHavePaid: "✓ મેં UPI દ્વારા ₹49 ચૂકવ્યા છે — પ્રો સક્રિય કરો", recordCashSale: "રોકડ વેચાણ રેકોર્ડ કરો", saveCashSale: "રોકડ વેચાણ સાચવો",
-        addCredit: "ક્રેડિટ ઉમેરો", saveToKhata: "ખાતાવહીમાં સાચવો", addStock: "સ્ટોક ઉમેરો", addItemBtn: "આઇટમ ઉમેરો", accountSettings: "ખાતા સેટિંગ્સ",
-        profileName: "પ્રોફાઇલ નામ:", businessName: "વ્યવસાયનું નામ:", mobileNumber: "મોબાઈલ નંબર:", switchMode: "મોડ બદલો:", vendor: "વિક્રેતા",
-        kirana: "કિરાણા", wholesaler: "જથ્થાબંધ વેપારી", deleteAccount: "ખાતું ડિલીટ કરો"
+        shopkeeperRole: "દુકાનદાર / કિરાણા", shopkeeperRoleSub: "પીઓએસ બિલિંગ અને ઇન્વેન્ટરી", createProfile: "પ્રોફાઇલ બનાવો", continue: "ચાલુ રાખો",
+        trialActivated: "15-દિવસની મફત અજમાયશ સક્રિય!", launchPortal: "🚀 મારું પોર્ટલ લોન્ચ કરો", unlockPremium: "પ્રિમિયમ અનલોક કરો (₹49/મહિનો)",
+        trialStatus: "અજમાયશ સ્થિતિ", qrDesc: "UPI દ્વારા ₹49 ચૂકવવા માટે QR સ્કેન કરો.", iHavePaid: "✓ મેં UPI દ્વારા ₹49 ચૂકવ્યા છે — પ્રો સક્રિય કરો",
+        recordCashSale: "રોકડ વેચાણ રેકોર્ડ કરો", saveCashSale: "રોકડ વેચાણ સાચવો", addCredit: "ક્રેડિટ ઉમેરો", saveToKhata: "ખાતાવહીમાં સાચવો",
+        addStock: "સ્ટોક ઉમેરો", addItemBtn: "આઇટમ ઉમેરો", accountSettings: "ખાતા સેટિંગ્સ", profileName: "પ્રોફાઇલ નામ:", businessName: "વ્યવસાયનું નામ:",
+        mobileNumber: "મોબાઈલ નંબર:", switchMode: "મોડ બદલો:", vendor: "વિક્રેता", kirana: "કિરાણા", deleteAccount: "ખાતું ડિલીટ કરો"
       },
       mr: {
         todayRevenue: "एकूण कमाई", cashSales: "रोख विक्री", netProfit: "निव्वळ नफा", khataCredit: "खाते उधारी", openKhata: "खाते वही उघडा",
@@ -950,26 +889,22 @@
         khataPending: "खाते बाकी थकबाकी", manageKhata: "खाते व्यवस्थापित करा →", posCounter: "फास्ट पीओएस काउंटर बिलिंग", cartTotal: "कार्ट एकूण",
         selectStoreItem: "-- स्टोर आयटम निवडा --", addItem: "+ आयटम जोडा", item: "आयटम", price: "किंमत", qty: "प्रमाण", total: "एकूण", action: "कृती",
         cashPaid: "रोख दिले", onlinePay: "ऑनलाइन पे", addToKhata: "खात्यात जोडा", kiranaInventory: "किराणा इन्व्हेंटरी", voiceAdd: "व्हॉईस ॲड", new: "नवीन",
-        listeningVoice: "ऐकत आहे...", wholesaleDistributor: "घाऊक वितरक केंद्र", wholesalerSub: "स्थानिक दुकानदारांकडून ऑर्डर स्वीकारा.",
-        incomingOrders: "आवक पुरवठा ऑर्डर", publicCatalog: "सार्वजनिक घाऊक कॅटलॉग", addStockItem: "+ स्टॉक आयटम जोडा",
-        digitalKhata: "डिजिटल खाते वही", khataSub: "थकबाकी क्रेडिट ट्रॅक करा.", addCustomerCredit: "ग्राहक क्रेडिट जोडा",
+        listeningVoice: "ऐकत आहे...", digitalKhata: "डिजिटल खाते वही", khataSub: "थकबाकी क्रेडिट ट्रॅक करा.", addCustomerCredit: "ग्राहक क्रेडिट जोडा",
         wholesalersNearby: "जवळील घाऊक वितरक", detectGps: "जीपीएस स्थान शोधा", currentStoreLoc: "तुमचे वर्तमान स्टोर स्थान",
         verifiedWholesalers: "सत्यापित घाऊक आऊटलेट्स", aiAssistant: "एआय बिझनेस असिस्टंट", aiSub: "तुमच्या विक्री, नफा किंवा स्टॉकबद्दल विचारणा करा.",
         aiWelcomeText: "नमस्कार! मी तुमचा एआय सहाय्यक आहे.", tapToSpeak: "बोलण्यासाठी टॅप करा", reportsGstTitle: "अहवाल आणि जीएसटी स्थिती",
-        todaysTotal: "आजची एकूण", thisMonth: "या महिन्यात", smartGstAnalyzer: "स्मार्ट जीएसटी विश्लेषक",
-        gstAnalyzerDesc: "तुमच्या मासिक विक्रीच्या आधारे, आम्ही आपोआप गणना करतो.", gstApplicability: "जीएसटी लागू:", estTaxPayable: "अंदाजे कर देय:",
-        smsNotificationStatus: "एसएमएस सूचना स्थिती:", recentDailyHistory: "अलीकडील दैनिक इतिहास", onlinePaymentApp: "ऑनलाइन पेमेंट ॲप",
-        onlinePaymentDesc: "तृतीय-पक्ष ॲप्सवरून येणारे पेमेंट रेकॉर्ड करा.", customerRefId: "ग्राहक / संदर्भ आयडी", receivedAmount: "प्राप्त रक्कम (₹) *",
+        todaysTotal: "आजची एकूण", thisMonth: "या महिन्यात", smartGstAnalyzer: "स्मार्ट जीएसटी विश्लेषक", gstAnalyzerDesc: "मासिक विक्रीच्या आधारे गणना होते.",
+        gstApplicability: "जीएसटी लागू:", estTaxPayable: "अंदाजे कर देय:", smsNotificationStatus: "एसएमएस सूचना स्थिती:", recentDailyHistory: "अलीकडील दैनिक इतिहास",
+        onlinePaymentApp: "ऑनलाइन पेमेंट ॲप", onlinePaymentDesc: "तृतीय-पक्ष ॲप्सवरूनयेणारे पेमेंट रेकॉर्ड करा.", customerRefId: "ग्राहक आयडी", receivedAmount: "प्राप्त रक्कम (₹) *",
         logOnlinePayment: "✓ ऑनलाइन पेमेंट नोंदवा", setupTitle: "व्यापारप्लस सेटअप", welcomeTitle: "व्यापारप्लसमध्ये स्वागत आहे",
-        welcomeDesc: "विक्रेते, किराणा दुकानदार आणि घाऊक ವ್ಯಾപാऱ्यांसाठी तुमचे स्मार्ट प्लॅटफॉर्म.", startBtn: "प्रारंभ करा", chooseLang: "तुमची भाषा निवडा",
+        welcomeDesc: "विक्रेते आणि किराणा दुकानदारांसाठी तुमचे स्मार्ट प्लॅटफॉर्म.", startBtn: "प्रारंभ करा", chooseLang: "तुमची भाषा निवडा",
         selectLangSub: "ॲप इंटरफेससाठी भाषा निवडा:", selectCategory: "व्यवसाय वर्ग निवडा", vendorRole: "विक्रेता / फेरीवाला", vendorRoleSub: "जलद रोख/ऑनलाइन नोंदी",
-        shopkeeperRole: "दुकानदार / किराणा", shopkeeperRoleSub: "पीओएस बिलिंग आणि इन्व्हेंटरी", wholesalerRole: "घाऊक व्यापारी / वितरक", wholesalerRoleSub: "पुरवठा ऑर्डर प्राप्त करा",
-        createProfile: "प्रफाइल तयार करा", continue: "सुरू ठेवा", trialActivated: "15-दिवसांची मोफत चाचणी सक्रिय!", launchPortal: "🚀 माझे पोर्टल सुरू करा",
-        unlockPremium: "प्रीमियम अनलॉक करा (₹49/महिना)", trialStatus: "चाचणी स्थिती", qrDesc: "UPI द्वारे ₹49 भरण्यासाठी QR स्कॅन करा.",
-        iHavePaid: "✓ मी UPI द्वारे ₹49 भरले आहेत — प्रो सक्रिय करा", recordCashSale: "रोख विक्री नोंदवा", saveCashSale: "रोख विक्री जतन करा",
-        addCredit: "क्रेडिट जोडा", saveToKhata: "खाते वहीत जतन करा", addStock: "स्टॉक जोडा", addItemBtn: "आयटम जोडा", accountSettings: "खाते सेटिंग्ज",
-        profileName: "प्रफाइल नाव:", businessName: "व्यावसायिक नाव:", mobileNumber: "मोबाइल नंबर:", switchMode: "मोड बदला:", vendor: "विक्रेता",
-        kirana: "किराणा", wholesaler: "घाऊक व्यापारी", deleteAccount: "खाते हटवा"
+        shopkeeperRole: "दुकानदार / किराणा", shopkeeperRoleSub: "पीओएस बिलिंग आणि इन्व्हेंटरी", createProfile: "प्रफाइल तयार करा", continue: "सुरू ठेवा",
+        trialActivated: "15-दिवसांची मोफत चाचणी सक्रिय!", launchPortal: "🚀 माझे पोर्टल सुरू करा", unlockPremium: "प्रीमियम अनलॉक करा (₹49/महिना)",
+        trialStatus: "चाचणी स्थिती", qrDesc: "UPI द्वारे ₹49 भरण्यासाठी QR स्कॅन करा.", iHavePaid: "✓ मी UPI द्वारे ₹49 भरले आहेत — प्रो सक्रिय करा",
+        recordCashSale: "रोख विक्री नोंदवा", saveCashSale: "रोख विक्री जतन करा", addCredit: "क्रेडिट जोडा", saveToKhata: "खाते वहीत जतन करा",
+        addStock: "स्टॉक जोडा", addItemBtn: "आयटम जोडा", accountSettings: "खाते सेटिंग्ज", profileName: "प्रफाइल नाव:", businessName: "व्यावसायिक नाव:",
+        mobileNumber: "मोबाइल नंबर:", switchMode: "मोड बदला:", vendor: "विक्रेता", kirana: "किराणा", deleteAccount: "खाते हटवा"
       },
       bn: {
         todayRevenue: "মোট আয়", cashSales: "নগদ বিক্রয়", netProfit: "নিট লাভ", khataCredit: "বাকি খাতা", openKhata: "খাতা খুলুন",
@@ -980,26 +915,22 @@
         khataPending: "বকেয়া পাওনা", manageKhata: "খাতা পরিচালনা করুন →", posCounter: "ফাস্ট পিওএস কাউন্টার বিলিং", cartTotal: "কার্ট মোট",
         selectStoreItem: "-- আইটেম নির্বাচন করুন --", addItem: "+ আইটেম যোগ করুন", item: "আইটেম", price: "মূল্য", qty: "পরিমাণ", total: "মোট", action: "কার্যকলাপ",
         cashPaid: "নগদ প্রদান", onlinePay: "অনলাইন পে", addToKhata: "খাতায় যোগ করুন", kiranaInventory: "মুদি ইনভেন্টরি", voiceAdd: "ভয়েস অ্যাড", new: "নতুন",
-        listeningVoice: "শুনছি...", wholesaleDistributor: "পাইকারি পরিবেশক কেন্দ্র", wholesalerSub: "স্থানীয় দোকানদারদের থেকে অর্ডার গ্রহণ করুন।",
-        incomingOrders: "আগত সরবরাহ অর্ডার", publicCatalog: "পাবলিক বাল্ক ক্যাটালগ", addStockItem: "+ স্টক আইটেম যোগ করুন",
-        digitalKhata: "ডিজিটাল খাতা", khataSub: "বকেয়া ক্রেডিট ট্র্যাক করুন।", addCustomerCredit: "গ্রাহক ক্রেডিট যোগ করুন",
+        listeningVoice: "শুনছি...", digitalKhata: "ডিজিটাল খাতা", khataSub: "বকেয়া ক্রেডিট ট্র্যাক করুন।", addCustomerCredit: "গ্রাহক ক্রেডিট যোগ করুন",
         wholesalersNearby: "কাছাকাছি পাইকারি পরিবেশক", detectGps: "জিপিএস অবস্থান সনাক্ত করুন", currentStoreLoc: "আপনার বর্তমান দোকানের অবস্থান",
         verifiedWholesalers: "যাচাইকৃত পাইকারি আউটলেট", aiAssistant: "এআই বিজনেস অ্যাসিস্ট্যান্ট", aiSub: "আপনার বিক্রয় বা স্টক সম্পর্কে জিজ্ঞাসা করুন।",
         aiWelcomeText: "হ্যালো! আমি আপনার এআই সহকারী।", tapToSpeak: "কথা বলতে ট্যাপ করুন", reportsGstTitle: "রিপোর্ট ও জিএসটি স্থিতি",
-        todaysTotal: "আজকের মোট", thisMonth: "এই মাস", smartGstAnalyzer: "স্মার্ট জিএসটি বিশ্লেষক",
-        gstAnalyzerDesc: "আপনার মাসিক বিক্রয়ের উপর ভিত্তি করে আমরা জিএসটি গণনা করি।", gstApplicability: "জিএসটি প্রযোজ্যতা:", estTaxPayable: "প্রত্যাশিত কর প্রদেয়:",
-        smsNotificationStatus: "এসএমএস বিজ্ঞপ্তি স্থিতি:", recentDailyHistory: "সাম্প্রতিক দৈনিক ইতিহাস", onlinePaymentApp: "অনলাইন পেমেন্ট অ্যাপ",
-        onlinePaymentDesc: "থার্ড-পার্টি অ্যাপ থেকে পেমেন্ট রেকর্ড করুন।", customerRefId: "গ্রাহক / রেফারেন্স আইডি", receivedAmount: "প্রাপ্ত পরিমাণ (₹) *",
+        todaysTotal: "আজকের মোট", thisMonth: "এই মাস", smartGstAnalyzer: "স্মার্ট জিএসটি বিশ্লেষক", gstAnalyzerDesc: "মাসিক বিক্রয়ের উপর ভিত্তি করে গণনা।",
+        gstApplicability: "জিএসটি প্রযোজ্যতা:", estTaxPayable: "প্রত্যাশিত কর প্রদেয়:", smsNotificationStatus: "এসএমএস বিজ্ঞপ্তি স্থিতি:", recentDailyHistory: "সাম্প্রতিক দৈনিক ইতিহাস",
+        onlinePaymentApp: "অনলাইন পেমেন্ট অ্যাপ", onlinePaymentDesc: "থার্ড-পার্টি অ্যাপ থেকে পেমেন্ট রেকর্ড করুন।", customerRefId: "গ্রাহক আইডি", receivedAmount: "প্রাপ্ত পরিমাণ (₹) *",
         logOnlinePayment: "✓ অনলাইন পেমেন্ট লগ করুন", setupTitle: "ব্যাপারপ্লাস সেটআপ", welcomeTitle: "ব্যাপারপ্লাসে স্বাগতম",
-        welcomeDesc: "ভেন্ডর, মুদি দোকানদার এবং পাইকারি বিক্রেতাদের জন্য আপনার স্মার্ট প্ল্যাটফর্ম।", startBtn: "শুরু করুন", chooseLang: "আপনার ভাষা চয়ন করুন",
+        welcomeDesc: "ভেন্ডর এবং মুদি দোকানদারদের জন্য আপনার স্মার্ট প্ল্যাটফর্ম।", startBtn: "শুরু করুন", chooseLang: "আপনার ভাষা চয়ন করুন",
         selectLangSub: "অ্যাপ ইন্টারফেসের জন্য ভাষা নির্বাচন করুন:", selectCategory: "ব্যবসার বিভাগ নির্বাচন করুন", vendorRole: "ভেন্ডর / ফেরিওয়ালা", vendorRoleSub: "দ্রুত নগদ/অনলাইন এন্ট্রি",
-        shopkeeperRole: "দোকানদার / মুদি", shopkeeperRoleSub: "পিওএস বিলিং ও ইনভেন্টরি", wholesalerRole: "পাইকারি বিক্রেতা", wholesalerRoleSub: "সরবরাহ অর্ডার গ্রহণ করুন",
-        createProfile: "প্রোফাইল তৈরি করুন", continue: "চালিয়ে যান", trialActivated: "১৫ দিনের ফ্রি ট্রায়াল সক্রিয়!", launchPortal: "🚀 আমার পোর্টাল চালু করুন",
-        unlockPremium: "প্রিমিয়াম আনলক করুন (₹49/মাস)", trialStatus: "ট্রায়াল স্থিতি", qrDesc: "ইউপিআই মাধ্যমে ₹49 পেমেন্ট করতে QR স্ক্যান করুন।",
-        iHavePaid: "✓ ইউপিআই এর মাধ্যমে ₹49 পেমেন্ট করেছি — প্রো সক্রিয় করুন", recordCashSale: "নগদ বিক্রয় রেকর্ড করুন", saveCashSale: "নগদ বিক্রয় সংরক্ষণ করুন",
-        addCredit: "ক্রেডিট যোগ করুন", saveToKhata: "খাতায় সংরক্ষণ করুন", addStock: "স্টক যোগ করুন", addItemBtn: "আইটেম যোগ করুন", accountSettings: "অ্যাকাউন্ট সেটিংস",
-        profileName: "প্রোফাইল নাম:", businessName: "ব্যবসার নাম:", mobileNumber: "মোবাইল নম্বর:", switchMode: "মোড পরিবর্তন:", vendor: "ভেন্ডর",
-        kirana: "মুদি", wholesaler: "পাইকারি", deleteAccount: "অ্যাকাউন্ট মুছুন"
+        shopkeeperRole: "দোকানদার / মুদি", shopkeeperRoleSub: "পিওএস বিলিং ও ইনভেন্টরি", createProfile: "প্রোফাইল তৈরি করুন", continue: "চালিয়ে যান",
+        trialActivated: "১৫ দিনের ফ্রি ট্রায়াল সক্রিয়!", launchPortal: "🚀 আমার পোর্টাল চালু করুন", unlockPremium: "প্রিমিয়াম আনলক করুন (₹49/মাস)",
+        trialStatus: "ট্রায়াল স্থিতি", qrDesc: "ইউপিআই মাধ্যমে ₹49 পেমেন্ট করতে QR স্ক্যান করুন।", iHavePaid: "✓ ইউপিআই এর মাধ্যমে ₹49 পেমেন্ট করেছি — প্রো সক্রিয় করুন",
+        recordCashSale: "নগদ বিক্রয় রেকর্ড করুন", saveCashSale: "নগদ বিক্রয় সংরক্ষণ করুন", addCredit: "ক্রেডিট যোগ করুন", saveToKhata: "খাতায় সংরক্ষণ করুন",
+        addStock: "স্টক যোগ করুন", addItemBtn: "আইটেম যোগ করুন", accountSettings: "অ্যাকাউন্ট সেটিংস", profileName: "প্রোফাইল নাম:", businessName: "ব্যবসার নাম:",
+        mobileNumber: "মোবাইল নম্বর:", switchMode: "মোড পরিবর্তন:", vendor: "ভেন্ডর", kirana: "মুদি", deleteAccount: "অ্যাকাউন্ট মুছুন"
       },
       ta: {
         todayRevenue: "மொத்த வருவாய்", cashSales: "பண விற்பனை", netProfit: "நிகர லாபம்", khataCredit: "கடன் பாக்கி", openKhata: "கட்டணப் பதிவேடு",
@@ -1010,26 +941,22 @@
         khataPending: "நிலுவைக் கடன்", manageKhata: "கடன் மேலாண்மை →", posCounter: "பிஓஎஸ் பில்லிங்", cartTotal: "கார்ட் மொத்தம்",
         selectStoreItem: "-- பொருளைத் தேர்ந்தெடு --", addItem: "+ பொருளைச் சேர்", item: "பொருள்", price: "விலை", qty: "அளவு", total: "மொத்தம்", action: "செயல்",
         cashPaid: "பணம் செலுத்தியது", onlinePay: "ஆன்லைன் பே", addToKhata: "கடனில் சேர்", kiranaInventory: "மளிகை சரக்கு", voiceAdd: "குரல் சேர்ப்பு", new: "புதிய",
-        listeningVoice: "கேட்கிறது...", wholesaleDistributor: "மொத்த விற்பனை மையம்", wholesalerSub: "உள்ளூர் கடைக்காரர்களிடமிருந்து ஆர்டர்களைப் பெறுங்கள்.",
-        incomingOrders: "வரும் விநியோக ஆர்டர்கள்", publicCatalog: "பொது மொத்த பட்டியல்", addStockItem: "+ சரக்கு பொருளைச் சேர்",
-        digitalKhata: "டிஜிட்டல் கடன் பதிவேடு", khataSub: "நிலுவைக் கடன்களைக் கண்காணிக்கவும்.", addCustomerCredit: "வாடிக்கையாளர் கடன் சேர்",
+        listeningVoice: "கேட்கிறது...", digitalKhata: "டிஜிட்டல் கடன் பதிவேடு", khataSub: "நிலுவைக் கடன்களைக் கண்காணிக்கவும்.", addCustomerCredit: "வாடிக்கையாளர் கடன் சேர்",
         wholesalersNearby: "அருகிலுள்ள மொத்த விற்பனையாளர்கள்", detectGps: "ஜிபிஎஸ் இருப்பிடத்தைக் கண்டறி", currentStoreLoc: "உங்கள் தற்போதைய கடை இருப்பிடம்",
         verifiedWholesalers: "சரிபார்க்கப்பட்ட மொத்த கடைகள்", aiAssistant: "AI வியாபார உதவியாளர்", aiSub: "உங்கள் விற்பனை அல்லது சரக்கு பற்றி கேளுங்கள்.",
         aiWelcomeText: "வணக்கம்! நான் உங்கள் AI உதவியாளர்.", tapToSpeak: "பேச தொடங்கு", reportsGstTitle: "அறிக்கைகள் & ஜிஎஸ்டி நிலை",
-        todaysTotal: "இன்றைய மொத்தம்", thisMonth: "இந்த மாதம்", smartGstAnalyzer: "ஸ்மார்ட் ஜிஎஸ்டி பகுப்பாய்வி",
-        gstAnalyzerDesc: "உங்கள் மாத விற்பனையின் அடிப்படையில் ஜிஎஸ்டி கணக்கிடப்படுகிறது.", gstApplicability: "ஜிஎஸ்டி பொருந்தும் தன்மை:", estTaxPayable: "மதிப்பிடப்பட்ட வரி:",
-        smsNotificationStatus: "SMS அறிவிப்பு நிலை:", recentDailyHistory: "சமீபத்திய தினசரி வரலாறு", onlinePaymentApp: "ஆன்லைன் கட்டண செயலி",
-        onlinePaymentDesc: "மூன்றாம் தரப்பு செயலிகளிலிருந்து வரும் கட்டணங்களைப் பதிவு செய்யவும்.", customerRefId: "வாடிக்கையாளர் ஐடி", receivedAmount: "பெற்ற தொகை (₹) *",
+        todaysTotal: "இன்றைய மொத்தம்", thisMonth: "இந்த மாதம்", smartGstAnalyzer: "ஸ்மார்ட் ஜிஎஸ்டி பகுப்பாய்வி", gstAnalyzerDesc: "மாத விற்பனை அடிப்படையில் கணக்கிடப்படுகிறது.",
+        gstApplicability: "ஜிஎஸ்டி பொருந்தும் தன்மை:", estTaxPayable: "மதிப்பிடப்பட்ட வரி:", smsNotificationStatus: "SMS அறிவிப்பு நிலை:", recentDailyHistory: "சமீபத்திய தினசரி வரலாறு",
+        onlinePaymentApp: "ஆன்லைன் கட்டண செயலி", onlinePaymentDesc: "மூன்றாம் தரப்பு செயலிகளிலிருந்து வரும் கட்டணங்களைப் பதிவு செய்யவும்.", customerRefId: "வாடிக்கையாளர் ஐடி", receivedAmount: "பெற்ற தொகை (₹) *",
         logOnlinePayment: "✓ ஆன்லைன் கட்டணத்தைப் பதிவு செய்", setupTitle: "வியாபார் பிளஸ் அமைப்பு", welcomeTitle: "வியாபார் பிளஸுக்கு நல்வரவு",
-        welcomeDesc: "வியாபாரிகள், மளிகைக் கடைக்காரர்கள் மற்றும் மொத்த விற்பனையாளர்களுக்கான உங்களின் ஸ்மார்ட் தளம்.", startBtn: "தொடங்கு", chooseLang: "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்",
+        welcomeDesc: "வியாபாரிகள் மற்றும் மளிகைக் கடைக்காரர்களுக்கான உங்களின் ஸ்மார்ட் தளம்.", startBtn: "தொடங்கு", chooseLang: "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்",
         selectLangSub: "செயலி மொழியைத் தேர்ந்தெடுக்கவும்:", selectCategory: "வியாபார வகையைத் தேர்ந்தெடு", vendorRole: "வியாபாரி / தள்ளுவண்டி", vendorRoleSub: "விரைவான பணப் பதிவுகள்",
-        shopkeeperRole: "கடைக்காரர் / மளிகை", shopkeeperRoleSub: "பிஓஎஸ் பில்லிங் & சரக்கு", wholesalerRole: "மொத்த வியாபாரி", wholesalerRoleSub: "விநியோக ஆர்டர்களைப் பெறுங்கள்",
-        createProfile: "சுயவிவரத்தை உருவாக்கவும்", continue: "தொடரவும்", trialActivated: "15 நாள் இலவச சோதனை فعال!", launchPortal: "🚀 என் தளத்தைத் தொடங்கு",
-        unlockPremium: "பிரீமியம் திற (₹49/மாதம்)", trialStatus: "சோதனை நிலை", qrDesc: "UPI மூலம் ₹49 செலுத்த QR குறியீட்டை ஸ்கேன் செய்யவும்.",
-        iHavePaid: "✓ UPI மூலம் ₹49 செலுத்தினேன் — புரோவை இயக்கு", recordCashSale: "பண விற்பனையைப் பதிவு செய்", saveCashSale: "பண விற்பனையைச் சேமி",
-        addCredit: "கடனைச் சேர்", saveToKhata: "கடன் பதிவேட்டில் சேமி", addStock: "சரக்கைச் சேர்", addItemBtn: "பொருளைச் சேர்", accountSettings: "கணக்கு அமைப்புகள்",
-        profileName: "சுயவிவரப் பெயர்:", businessName: "வியாபாரப் பெயர்:", mobileNumber: "மொபைல் எண்:", switchMode: "முறை மாற்றுக:", vendor: "வியாபாரி",
-        kirana: "மளிகை", wholesaler: "மொத்த வியாபாரி", deleteAccount: "கணக்கை நீக்கு"
+        shopkeeperRole: "கடைக்காரர் / மளிகை", shopkeeperRoleSub: "பிஓஎஸ் பில்லிங் & சரக்கு", createProfile: "சுயவிவரத்தை உருவாக்கவும்", continue: "தொடரவும்",
+        trialActivated: "15 நாள் இலவச சோதனை فعال!", launchPortal: "🚀 என் தளத்தைத் தொடங்கு", unlockPremium: "பிரீமியம் திற (₹49/மாதம்)",
+        trialStatus: "சோதனை நிலை", qrDesc: "UPI மூலம் ₹49 செலுத்த QR குறியீட்டை ஸ்கேன் செய்யவும்.", iHavePaid: "✓ UPI மூலம் ₹49 செலுத்தினேன் — புரோவை இயக்கு",
+        recordCashSale: "பண விற்பனையைப் பதிவு செய்", saveCashSale: "பண விற்பனையைச் சேமி", addCredit: "கடனைச் சேர்", saveToKhata: "கடன் பதிவேட்டில் சேமி",
+        addStock: "சரக்கைச் சேர்", addItemBtn: "பொருளைச் சேர்", accountSettings: "கணக்கு அமைப்புகள்", profileName: "சுயவிவரப் பெயர்:", businessName: "வியாபாரப் பெயர்:",
+        mobileNumber: "மொபைல் எண்:", switchMode: "முறை மாற்றுக:", vendor: "வியாபாரி", kirana: "மளிகை", deleteAccount: "கணக்கை நீக்கு"
       },
       te: {
         todayRevenue: "మొత్తం రాబడి", cashSales: "నగదు అమ్మకాలు", netProfit: "నికర లాభం", khataCredit: "ఖాతా బకాయి", openKhata: "ఖాతా తెరవండి",
@@ -1040,26 +967,22 @@
         khataPending: "బకాయి ఉన్న క్రెడిట్", manageKhata: "ఖాతాను నిర్వహించండి →", posCounter: "ఫాస్ట్ POS బిల్లింగ్", cartTotal: "కార్ట్ మొత్తం",
         selectStoreItem: "-- ఐటెమ్‌ను ఎంచుకోండి --", addItem: "+ ఐటెమ్‌ను జోడించు", item: "ఐటెమ్", price: "ధర", qty: "పరిమాణం", total: "మొత్తం", action: "చర్య",
         cashPaid: "నగదు చెల్లించబడింది", onlinePay: "ఆన్‌లైన్ పే", addToKhata: "ఖాతాకు జోడించు", kiranaInventory: "కిరాణా స్టాక్", voiceAdd: "వాయిస్ యాడ్", new: "కొత్తది",
-        listeningVoice: "వింటోంది...", wholesaleDistributor: "టోకు పంపిణీ కేంద్రం", wholesalerSub: "స్థానిక దుకాణదారుల నుండి ఆర్డర్‌లను స్వీకరించండి.",
-        incomingOrders: "ఇన్‌కమింగ్ సప్లై ఆర్డర్‌లు", publicCatalog: "పబ్లిక్ హోల్‌సేల్ కేటలాగ్", addStockItem: "+ స్టాక్ ఐటెమ్‌ను జోడించు",
-        digitalKhata: "డిజిటల్ ఖాతా", khataSub: "బకాయి ఉన్న క్రెడిట్‌ను ట్రాక్ చేయండి.", addCustomerCredit: "కస్టమర్ క్రెడిట్‌ను జోడించు",
+        listeningVoice: "వింటోంది...", digitalKhata: "డిజిటల్ ఖాతా", khataSub: "బకాయి ఉన్న క్రెడిట్‌ను ట్రాక్ చేయండి.", addCustomerCredit: "కస్టమర్ క్రెడిట్‌ను జోడించు",
         wholesalersNearby: "సమీపంలోని టోకు వ్యాపారులు", detectGps: "GPS స్థానాన్ని గుర్తించు", currentStoreLoc: "మీ ప్రస్తుత స్టోర్ స్థానం",
         verifiedWholesalers: "ధృవీకరించబడిన హోల్‌సేల్ అవుట్‌లెట్లు", aiAssistant: "AI బిజినెస్ అసిస్టెంట్", aiSub: "మీ అమ్మకాలు, లాభం లేదా స్టాక్ గురించి అడగండి.",
         aiWelcomeText: "నమస్తే! నేను మీ AI సహాయకుడిని.", tapToSpeak: "మాట్లాడటానికి ట్యాప్ చేయండి", reportsGstTitle: "నివేదికలు & GST స్థితి",
-        todaysTotal: "నేటి మొత్తం", thisMonth: "ఈ నెల", smartGstAnalyzer: "స్మార్ట్ GST ఎనలైజర్",
-        gstAnalyzerDesc: "మీ నెలవారీ అమ్మకాల ఆధారంగా GST లెక్కింపు.", gstApplicability: "GST వర్తింపు:", estTaxPayable: "అంచనా పన్ను చెల్లించవలసినది:",
-        smsNotificationStatus: "SMS నోటిఫికేషన్ స్థితి:", recentDailyHistory: "ఇటీవలి రోజువారీ చరిత్ర", onlinePaymentApp: "ఆన్‌లైన్ చెల్లింపు యాప్",
-        onlinePaymentDesc: "థర్డ్-పార్టీ యాప్‌ల నుండి చెల్లింపులను రికార్డ్ చేయండి.", customerRefId: "కస్టమర్ ఐడి", receivedAmount: "అందుకున్న మొత్తం (₹) *",
+        todaysTotal: "నేటి మొత్తం", thisMonth: "ఈ నెల", smartGstAnalyzer: "స్మార్ట్ GST ఎనలైజర్", gstAnalyzerDesc: "నెలవారీ అమ్మకాల ఆధారంగా GST లెక్కింపు.",
+        gstApplicability: "GST వర్తింపు:", estTaxPayable: "అంచనా పన్ను చెల్లించవలసినది:", smsNotificationStatus: "SMS నోటిఫికేషన్ స్థితి:", recentDailyHistory: "ఇటీవలి రోజువారీ చరిత్ర",
+        onlinePaymentApp: "ఆన్‌లైన్ చెల్లింపు యాప్", onlinePaymentDesc: "థర్డ్-పార్టీ యాప్‌ల నుండి చెల్లింపులను రికార్డ్ చేయండి.", customerRefId: "కస్టమర్ ఐడి", receivedAmount: "అందుకున్న మొత్తం (₹) *",
         logOnlinePayment: "✓ ఆన్‌లైన్ చెల్లింపును లాగ్ చేయండి", setupTitle: "వ్యాపార్ ప్లస్ సెటప్", welcomeTitle: "వ్యాపార్ ప్లస్‌కు స్వాగతం",
-        welcomeDesc: "విక్రేతలు, కిరాణా దుకాణదారులు మరియు టోకు వ్యాపారుల కోసం మీ స్మార్ట్ ప్లాట్‌ఫారమ్.", startBtn: "ప్రారంభించు", chooseLang: "మీ భాషను ఎంచుకోండి",
+        welcomeDesc: "విక్రేతలు మరియు కిరాణా దుకాణదారుల కోసం మీ స్మార్ట్ ప్లాట్‌ఫారమ్.", startBtn: "ప్రారంభించు", chooseLang: "మీ భాషను ఎంచుకోండి",
         selectLangSub: "యాప్ ఇంటర్‌ఫేస్ కోసం భాషను ఎంచుకోండి:", selectCategory: "వ్యాపార వర్గాన్ని ఎంచుకోండి", vendorRole: "విక్రేత / వీధి వ్యాపారి", vendorRoleSub: "త్వరిత నగదు/ఆన్‌లైన్ ఎంట్రీలు",
-        shopkeeperRole: "దుకాణదారుడు / కిరాణా", shopkeeperRoleSub: "POS బిల్లింగ్ & స్టాక్", wholesalerRole: "టోకు వ్యాపారి", wholesalerRoleSub: "సప్లై ఆర్డర్‌లను స్వీకరించండి",
-        createProfile: "ప్రొఫైల్‌ను సృష్టించండి", continue: "కొనసాగించు", trialActivated: "15 రోజుల ఉచిత ట్రయల్ సక్రియంగా ఉంది!", launchPortal: "🚀 నా పోర్టల్‌ని ప్రారంభించు",
-        unlockPremium: "ప్రీమియం అన్‌లాక్ చేయండి (₹49/నెల)", trialStatus: "ట్రయల్ స్థితి", qrDesc: "UPI ద్వారా ₹49 చెల్లించడానికి QR కోడ్‌ని స్కాన్ చేయండి.",
-        iHavePaid: "✓ నేను UPI ద్వారా ₹49 చెల్లించాను — ప్రోని సక్రియం చేయండి", recordCashSale: "నగదు అమ్మకాన్ని రికార్డ్ చేయి", saveCashSale: "నగదు అమ్మకాన్ని సేవ్ చేయి",
-        addCredit: "క్రెడిట్‌ను జోడించు", saveToKhata: "ఖాతాలో సేవ్ చేయి", addStock: "స్టాక్‌ను జోడించు", addItemBtn: "ఐటెమ్‌ను జోడించు", accountSettings: "ఖాతా సెట్టింగ్‌లు",
-        profileName: "ప్రొఫైల్ పేరు:", businessName: "వ్యాపార పేరు:", mobileNumber: "మొబైల్ నంబర్:", switchMode: "మోడ్ మార్చు:", vendor: "విక్రేత",
-        kirana: "కిరాణా", wholesaler: "టోకు వ్యాపారి", deleteAccount: "ఖాతాను తొలగించు"
+        shopkeeperRole: "దుకాణదారుడు / కిరాణా", shopkeeperRoleSub: "POS బిల్లింగ్ & స్టాక్", createProfile: "ప్రొఫైల్‌ను సృష్టించండి", continue: "కొనసాగించు",
+        trialActivated: "15 రోజుల ఉచిత ట్రయల్ సక్రియంగా ఉంది!", launchPortal: "🚀 నా పోర్టల్‌ని ప్రారంభించు", unlockPremium: "ప్రీమియం అన్‌లాక్ చేయండి (₹49/నెల)",
+        trialStatus: "ట్రయల్ స్థితి", qrDesc: "UPI ద్వారా ₹49 చెల్లించడానికి QR కోడ్‌ని స్కాన్ చేయండి.", iHavePaid: "✓ నేను UPI ద్వారా ₹49 చెల్లించాను — ప్రోని సక్రియం చేయండి",
+        recordCashSale: "నగదు అమ్మకాన్ని రికార్డ్ చేయి", saveCashSale: "నగదు అమ్మకాన్ని సేవ్ చేయి", addCredit: "క్రెడిట్‌ను జోడించు", saveToKhata: "ఖాతాలో సేవ్ చేయి",
+        addStock: "స్టాక్‌ను జోడించు", addItemBtn: "ఐటెమ్‌ను జోడించు", accountSettings: "ఖాతా సెట్టింగ్‌లు", profileName: "ప్రొఫైల్ పేరు:", businessName: "వ్యాపార పేరు:",
+        mobileNumber: "మొబైల్ నంబర్:", switchMode: "మోడ్ మార్చు:", vendor: "విక్రేత", kirana: "కిరాణా", deleteAccount: "ఖాతాను తొలగించు"
       }
     };
 
@@ -1140,14 +1063,14 @@
       renderAllDashboards();
     }
 
-    function activateSubscription() {
+    function confirmSubscriptionPayment() {
       if(APP_STATE.user) {
         APP_STATE.user.isSubscribed = true;
         localStorage.setItem('vp_user', JSON.stringify(APP_STATE.user));
         closeModal('modalSubscription');
         initializeUserSession();
         playCashSound();
-        showToast('Subscribed!', 'Welcome to VyaparPlus Premium! All features unlocked.', 'fa-crown');
+        showToast('Payment Verified', '₹49 subscription payment confirmed via UPI! Pro features unlocked.');
       }
     }
 
@@ -1164,20 +1087,7 @@
 
       const navContainer = document.getElementById('bottomNavContainer');
 
-      if (role === 'wholesaler') {
-        badge.innerText = 'Wholesaler Mode';
-        badge.className = 'text-[10px] bg-indigo-500/20 text-indigo-400 border border-indigo-500/40 px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold';
-        document.getElementById('dashWholesaler').classList.remove('hidden');
-        navContainer.innerHTML = `
-          <button onclick="switchTab('dashboard')" id="navTabDashboard" class="nav-tab-btn flex flex-col items-center gap-1 text-emerald-600 font-bold">
-            <i class="fa-solid fa-chart-pie text-lg"></i>
-            <span class="text-[10px]" data-i18n="navDashboard">Dashboard</span>
-          </button>
-          <button onclick="switchTab('khata')" id="navTabKhata" class="nav-tab-btn flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 font-medium">
-            <i class="fa-solid fa-book-open text-lg"></i>
-            <span class="text-[10px]" data-i18n="navKhata">Khata</span>
-          </button>`;
-      } else if (role === 'shopkeeper') {
+      if (role === 'shopkeeper') {
         badge.innerText = 'Kirana Store Mode';
         badge.className = 'text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/40 px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold';
         document.getElementById('dashShopkeeper').classList.remove('hidden');
@@ -1211,20 +1121,16 @@
       changeLanguage(APP_STATE.lang);
     }
 
-    function calculateMetrics(filterDate = getTodayStr()) {
-      const totals = APP_STATE.sales.reduce((acc, s) => {
+    function calculateMetrics() {
+      const sales = APP_STATE.sales;
+      const totals = sales.reduce((acc, s) => {
         const amt = parseFloat(s.amount) || 0;
         const cst = parseFloat(s.cost) || 0;
-        
-        if (!s.date) s.date = getTodayStr(); 
-
-        if (s.date === filterDate) {
-          acc.total += amt;
-          if (s.type === 'CASH') acc.cash += amt;
-          if (s.type === 'ONLINE') acc.online += amt; 
-          if (s.type === 'KHATA_SETTLED') acc.khataSettled += amt;
-          acc.cost += cst;
-        }
+        acc.total += amt;
+        if (s.type === 'CASH') acc.cash += amt;
+        if (s.type === 'ONLINE') acc.online += amt;
+        if (s.type === 'KHATA_SETTLED') acc.khataSettled += amt;
+        acc.cost += cst;
         return acc;
       }, { total: 0, cash: 0, online: 0, khataSettled: 0, cost: 0 });
 
@@ -1238,7 +1144,7 @@
     }
 
     function renderVendorDashboard() {
-      const { totals, netProfit, profitMargin, pendingKhata, pendingKhataCount } = calculateMetrics(getTodayStr());
+      const { totals, netProfit, profitMargin, pendingKhata, pendingKhataCount } = calculateMetrics();
 
       document.getElementById('vendorTotalRevenue').innerText = `₹${totals.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
       document.getElementById('vendorCashRevenue').innerText = `₹${totals.cash.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
@@ -1250,14 +1156,13 @@
       document.getElementById('vendorPendingKhata').innerText = `₹${pendingKhata.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
       document.getElementById('vendorKhataCount').innerText = `${pendingKhataCount} Customers owe credit`;
 
-      const todaySales = APP_STATE.sales.filter(s => (s.date || getTodayStr()) === getTodayStr());
-      document.getElementById('vendorSalesCount').innerText = `${todaySales.length} Sales`;
+      document.getElementById('vendorSalesCount').innerText = `${APP_STATE.sales.length} Sales`;
 
       const container = document.getElementById('vendorTxList');
-      if (todaySales.length === 0) {
-        container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">No sales today.</div>`;
+      if (APP_STATE.sales.length === 0) {
+        container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">No sales recorded yet.</div>`;
       } else {
-        container.innerHTML = todaySales.map(s => `
+        container.innerHTML = APP_STATE.sales.map(s => `
           <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center text-xs">
             <div class="flex items-center gap-2.5">
               <div class="w-7 h-7 rounded-lg ${s.type === 'CASH' ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700'} flex items-center justify-center">
@@ -1265,7 +1170,7 @@
               </div>
               <div>
                 <h4 class="font-bold text-slate-900">${s.title}</h4>
-                <span class="text-[10px] text-slate-400">${s.time} • ${s.type}</span>
+                <span class="text-[10px] text-slate-400">${s.time || 'Today'} • ${s.type}</span>
               </div>
             </div>
             <div class="text-right">
@@ -1277,7 +1182,7 @@
     }
 
     function renderKiranaDashboard() {
-      const { totals, netProfit, profitMargin, pendingKhata } = calculateMetrics(getTodayStr());
+      const { totals, netProfit, profitMargin, pendingKhata } = calculateMetrics();
 
       document.getElementById('kiranaTotalRevenue').innerText = `₹${totals.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
       document.getElementById('kiranaCash').innerText = `₹${totals.cash.toLocaleString()}`;
@@ -1308,26 +1213,9 @@
       renderPosCartTable();
     }
 
-    function renderWholesalerDashboard() {
-      const { totals } = calculateMetrics(getTodayStr());
-      document.getElementById('wholesalerTotalRevenue').innerText = `₹${totals.total.toLocaleString()}`;
-      document.getElementById('wholesalerCash').innerText = `₹${totals.cash.toLocaleString()}`;
-      document.getElementById('wholesalerOnline').innerText = `₹${totals.online.toLocaleString()}`;
-
-      const container = document.getElementById('wholesalerIncomingOrdersList');
-      document.getElementById('wholesalerOrderStats').innerText = `${APP_STATE.wholesalerOrders.length} Active`;
-      if (APP_STATE.wholesalerOrders.length === 0) container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs">No active orders.</div>`;
-      else container.innerHTML = APP_STATE.wholesalerOrders.map(o => `
-          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex justify-between items-center">
-            <div><h4 class="font-bold text-xs">${o.buyerName}</h4><span class="text-indigo-600 font-bold text-[10px]">${o.status}</span></div>
-            <span class="font-black text-slate-900">₹${o.totalAmount}</span>
-          </div>`).join('');
-    }
-
     function renderAllDashboards() {
       renderVendorDashboard();
       renderKiranaDashboard();
-      renderWholesalerDashboard();
       renderKhataGrid();
       renderWholesalersList();
     }
@@ -1354,7 +1242,7 @@
     function handleOnlinePayment(e) {
       e.preventDefault();
       const amount = parseFloat(document.getElementById('onlinePayAmount').value);
-      let title = document.getElementById('onlinePayDesc').value || 'Online Gateway Payment';
+      let title = document.getElementById('onlinePayDesc').value || 'Online Payment';
       const posContextAmount = parseFloat(document.getElementById('onlinePayPosTotal').value);
 
       if(!amount) return;
@@ -1379,7 +1267,6 @@
         title: title,
         amount: amount,
         cost: cost,
-        date: getTodayStr(),
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
@@ -1389,7 +1276,7 @@
       closeModal('modalOnlinePayment');
       playCashSound();
       renderAllDashboards();
-      showToast('Payment Received', `Recorded ₹${amount} via Online Gateway.`);
+      showToast('Payment Received', `Recorded ₹${amount} via Online Payment.`);
     }
 
     function handleSaveCashSale(e) {
@@ -1398,7 +1285,7 @@
       const amount = parseFloat(document.getElementById('cashSaleAmount').value);
       const cost = parseFloat(document.getElementById('cashSaleCost').value) || 0;
       if (!amount) return;
-      const newSale = { id: 'tx_' + Date.now(), type: 'CASH', title, amount, cost, date: getTodayStr(), time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+      const newSale = { id: 'tx_' + Date.now(), type: 'CASH', title, amount, cost, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
       APP_STATE.sales.unshift(newSale);
       localStorage.setItem('vp_sales', JSON.stringify(APP_STATE.sales));
       closeModal('modalCashSale');
@@ -1412,9 +1299,9 @@
       
       const thisMonth = getMonthStr();
       const monthSales = APP_STATE.sales.filter(s => s.date && s.date.startsWith(thisMonth));
-      const monthTotal = monthSales.reduce((sum, s) => sum + parseFloat(s.amount), 0);
+      const monthTotal = monthSales.reduce((sum, s) => sum + parseFloat(s.amount), 0) || APP_STATE.sales.reduce((sum, s) => sum + parseFloat(s.amount), 0);
       
-      const { totals } = calculateMetrics(getTodayStr());
+      const { totals } = calculateMetrics();
 
       document.getElementById('reportDailySales').innerText = `₹${totals.total.toLocaleString()}`;
       document.getElementById('reportMonthlySales').innerText = `₹${monthTotal.toLocaleString()}`;
@@ -1424,7 +1311,6 @@
       const smsStatusTag = document.getElementById('gstSmsStatusTag');
 
       let taxAmt = 0;
-
       if (monthTotal > 40000) {
         gstTag.innerText = "Applicable (18% Slab)";
         gstTag.className = "font-bold text-rose-400";
@@ -1442,20 +1328,12 @@
         smsStatusTag.innerText = "Sent automatically ✓";
       }
 
-      const grouped = {};
-      APP_STATE.sales.forEach(s => {
-        if(!grouped[s.date]) grouped[s.date] = 0;
-        grouped[s.date] += parseFloat(s.amount);
-      });
-
-      const historyHtml = Object.keys(grouped).sort().reverse().slice(0, 10).map(d => `
+      document.getElementById('dailyHistoryList').innerHTML = `
         <div class="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
-          <span class="text-xs font-bold text-slate-600">${d}</span>
-          <span class="text-xs font-black text-slate-900">₹${grouped[d].toLocaleString()}</span>
-        </div>
-      `).join('');
+          <span class="text-xs font-bold text-slate-600">Today's Total</span>
+          <span class="text-xs font-black text-slate-900">₹${totals.total.toLocaleString()}</span>
+        </div>`;
 
-      document.getElementById('dailyHistoryList').innerHTML = historyHtml || '<p class="text-xs text-slate-400">No data.</p>';
       document.getElementById('modalGSTReports').classList.remove('hidden');
     }
 
@@ -1537,17 +1415,17 @@
     }
 
     function processAiQuery(q) {
-      const todayTotal = calculateMetrics(getTodayStr()).totals.total;
-      const monthSales = APP_STATE.sales.filter(s => s.date && s.date.startsWith(getMonthStr())).reduce((a,b)=>a+parseFloat(b.amount),0);
+      const todayTotal = calculateMetrics().totals.total;
+      const monthSales = APP_STATE.sales.reduce((a,b)=>a+parseFloat(b.amount),0);
       
       let response = "I didn't quite get that. Try asking about 'revenue', 'profit', or 'stock'.";
 
       if (q.includes('revenue') || q.includes('sales') || q.includes('how much did i make')) {
-        response = `Your total revenue for today is ${todayTotal} rupees. Your monthly revenue is ${monthSales} rupees.`;
+        response = `Your total revenue is ${todayTotal} rupees. Your monthly revenue is ${monthSales} rupees.`;
       } 
       else if (q.includes('profit')) {
-        const p = calculateMetrics(getTodayStr()).netProfit;
-        response = `Your estimated net profit for today is ${p} rupees.`;
+        const p = calculateMetrics().netProfit;
+        response = `Your estimated net profit is ${p} rupees.`;
       }
       else if (q.includes('stock') || q.includes('restock') || q.includes('left')) {
         if(APP_STATE.user.role !== 'shopkeeper') {
@@ -1656,7 +1534,7 @@
         openKhataModal();
         document.getElementById('khataAmountDue').value = totalAmount;
       } else {
-        const newSale = { id: 'tx_' + Date.now(), type, title: `Kirana POS`, amount: totalAmount, cost: totalCost, date: getTodayStr(), time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+        const newSale = { id: 'tx_' + Date.now(), type, title: `Kirana POS`, amount: totalAmount, cost: totalCost, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
         APP_STATE.sales.unshift(newSale);
         localStorage.setItem('vp_sales', JSON.stringify(APP_STATE.sales));
         playCashSound();
@@ -1679,7 +1557,7 @@
       APP_STATE.wizardData.name = document.getElementById('wizUserName').value;
       APP_STATE.wizardData.phone = document.getElementById('wizUserPhone').value;
       APP_STATE.wizardData.storeName = document.getElementById('wizStoreName').value;
-      document.getElementById('trialPlanDetailsCard').innerHTML = `<p class="text-sm font-bold">15-Day Free Trial</p><p class="text-xs text-slate-500">Auto-renews at ₹49/mo after trial</p>`;
+      document.getElementById('trialPlanDetailsCard').innerHTML = `<p class="text-sm font-bold">15-Day Free Trial (₹49/mo after)</p><p class="text-xs text-slate-500">Full access to AI, GST & Payments during trial</p>`;
       showWizardStep(5);
     }
     function completeOnboarding() {
@@ -1693,21 +1571,16 @@
     function changeLanguage(langKey) {
       APP_STATE.lang = langKey;
       localStorage.setItem('vp_lang', langKey);
-      if(document.getElementById('langSelect')) {
-        document.getElementById('langSelect').value = langKey;
-      }
+      if(document.getElementById('langSelect')) document.getElementById('langSelect').value = langKey;
       const dict = TRANSLATIONS[langKey] || TRANSLATIONS['en'];
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (dict[key]) {
-          el.innerText = dict[key];
-        }
+        if (dict[key]) el.innerText = dict[key];
       });
     }
     
     function switchTab(t) { 
       document.querySelectorAll('.tab-view, .role-dashboard').forEach(el => el.classList.add('hidden')); 
-
       if(t==='dashboard') {
         applyRoleMode(APP_STATE.user.role); 
       } else {
@@ -1715,11 +1588,8 @@
         if(t==='wholesalers') {
           renderWholesalersList();
           setTimeout(() => { 
-            if(mapInstance) {
-              mapInstance.invalidateSize();
-            } else {
-              initLeafletMap();
-            }
+            if(mapInstance) mapInstance.invalidateSize();
+            else initLeafletMap();
           }, 300);
         } else if(t==='khata') {
           renderKhataGrid();
@@ -1731,17 +1601,6 @@
     function openCashSaleModal() { document.getElementById('modalCashSale').classList.remove('hidden'); }
     function openKhataModal() { document.getElementById('modalKhata').classList.remove('hidden'); }
     function openAddKiranaStockModal() { document.getElementById('modalAddKiranaStock').classList.remove('hidden'); }
-    
-    function confirmSubscriptionPayment() {
-      if(APP_STATE.user) {
-        APP_STATE.user.isSubscribed = true;
-        localStorage.setItem('vp_user', JSON.stringify(APP_STATE.user));
-        closeModal('modalSubscription');
-        initializeUserSession();
-        playCashSound();
-        showToast('Payment Verified', '₹49 subscription payment confirmed via UPI! Pro features unlocked.');
-      }
-    }
 
     function openAccountModal() { 
       if (APP_STATE.user) {
@@ -1762,11 +1621,11 @@
     function renderKhataGrid() {
       const c = document.getElementById('khataGrid');
       if (APP_STATE.khata.length === 0) { c.innerHTML = `<div class="col-span-full text-center py-6 text-slate-400">No entries.</div>`; return; }
-      c.innerHTML = APP_STATE.khata.map(k => `<div class="bg-white p-4 rounded-2xl border border-slate-200">
-        <div class="flex justify-between items-center"><h4 class="font-extrabold text-sm">${k.name}</h4><span class="text-xs ${k.status==='PENDING'?'text-amber-600':'text-emerald-600'}">${k.status}</span></div>
+      c.innerHTML = APP_STATE.khata.map(k => `<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
+        <div class="flex justify-between items-center"><h4 class="font-extrabold text-sm">${k.name}</h4><span class="text-xs font-mono font-bold ${k.status==='PENDING'?'text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full':'text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full'}">${k.status}</span></div>
         <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-100">
           <span class="text-lg font-black">₹${k.amount}</span>
-          ${k.status==='PENDING'?`<button onclick="APP_STATE.khata.find(x=>x.id==='${k.id}').status='PAID';APP_STATE.sales.unshift({id:'tx_'+Date.now(), type:'KHATA_SETTLED', title:'Khata - '+ '${k.name}', amount:${k.amount}, cost:0, date:getTodayStr(), time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});localStorage.setItem('vp_khata',JSON.stringify(APP_STATE.khata));localStorage.setItem('vp_sales',JSON.stringify(APP_STATE.sales));renderAllDashboards();renderKhataGrid();" class="text-xs bg-emerald-600 text-white px-2 py-1 rounded">Mark Paid</button>`:''}
+          ${k.status==='PENDING'?`<button onclick="APP_STATE.khata.find(x=>x.id==='${k.id}').status='PAID';APP_STATE.sales.unshift({id:'tx_'+Date.now(), type:'KHATA_SETTLED', title:'Khata - '+ '${k.name}', amount:${k.amount}, cost:0, time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});localStorage.setItem('vp_khata',JSON.stringify(APP_STATE.khata));localStorage.setItem('vp_sales',JSON.stringify(APP_STATE.sales));renderAllDashboards();renderKhataGrid();" class="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-xl font-bold">Mark Paid</button>`:''}
         </div>
       </div>`).join('');
     }
@@ -1816,6 +1675,7 @@
 
     function renderWholesalersList() {
       const container = document.getElementById('wholesalersList');
+      if(!container) return;
 
       container.innerHTML = APP_STATE.wholesalers.map(w => `
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
@@ -1843,11 +1703,9 @@
 
           <div class="pt-2 border-t border-slate-100 flex justify-between items-center">
             <span class="text-xs text-slate-500 font-medium">${w.items.length} wholesale items listed</span>
-            <div class="flex items-center gap-2">
-              <button onclick="orderDirectWhatsApp('${w.id}')" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1 transition shadow-sm">
-                <i class="fa-brands fa-whatsapp"></i> Order WhatsApp
-              </button>
-            </div>
+            <button onclick="orderDirectWhatsApp('${w.id}')" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1 transition shadow-sm">
+              <i class="fa-brands fa-whatsapp"></i> Order WhatsApp
+            </button>
           </div>
         </div>
       `).join('');
@@ -1857,7 +1715,7 @@
       const w = APP_STATE.wholesalers.find(item => item.id === wholesalerId);
       if (!w) return;
 
-      const storeName = APP_STATE.user ? APP_STATE.user.storeName : 'Kirana/Vendor Store';
+      const storeName = APP_STATE.user ? APP_STATE.user.storeName : 'Kirana Store';
       const catalogSummary = w.items.map(i => `- ${i.name}: [Qty Needed] (₹${i.price}/${i.unit})`).join('\n');
       
       const msg = `Hello *${w.name}*,\n\nI want to place a bulk stock order for my store *${storeName}*.\n\nPlease check my required items below:\n${catalogSummary}\n\nPlease confirm availability and total bill amount. Thank you!`;
